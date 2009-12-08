@@ -1,26 +1,26 @@
-// TODO: heading comment here
+// TODO: Заголовочный комментарий сюда
 #ifndef _EB2K_VECTOR_HPP
 #define _EB2K_VECTOR_HPP
 
 #include <vector>
 
-/* The coordinate system is represented in two ways:
-    "real") standard cartesian system with zero in leftmost bottom corner
-        distances and positions measured in pixels
-    "logical") normalized cartesian system with zero in leftmost bottom corner
-        distances and positions measured in fractions of 1
+/* Координатная система представлена двумя способами или «представлениями»:
+    "экранное") стандартная декартовая система координат, нуль находится в левом нижнем углу,
+        расстояния и положения измеряются пикселями
+    "логическое") нормализированная декартова система координат, нуль находится в левом нижнем углу,
+        расстояния и положения измеряются частями от 1
 */
     
-// TODO: What is the w/h aspect, by the way
+// TODO: Кстати, какое стандартное соотношение w/h в игре?
 
-// NB: Wanna argue this?
+// NB: Кто то поспорит?
 
 
 // TODO: DoxyGen
 class Vector
 {
     public:
-        /* TODO: Math & comments. One who does this gets cookies! */
+        /* TODO: Математика & комментарии. Кто сделает — получит печеньку! */
         Vector();
         Vector(const Vector&);
         Vector& operator=(const Vector&);
@@ -29,23 +29,23 @@ class Vector
         Vector operator+(const Vector&) const;
         Vector operator-(const Vector&) const;
         
-        /*  TODO: Proxy class around non-const members. One who does gets another cookie! 
-            proxy must check the argument against the bounds of the window when assigning:
-            (0;0)–(w;h) or (0;0)–(1;1) respectively. If argument is bad, throw exception */
-        /* Lower-case methods return real coordinates */
+        /*  TODO: Прокси-класс для неконтстантных методов. Тот, кто напишет получит еще печеньку!
+            Прокси должна проверять аргумент на выход за рамки окна при присваивании:
+            (0;0)–(w;h) или (0;0)–(1;1) соответственно. Если аргумент «плохой» — кидаем исключение. */
+        /* Методы в нижнем регистре возвращают экранные координаты */
         int x() const;
         int& x();
         int y() const;
         int &y();
         
-        /* Upper case methods return logical coordinates */
+        /* Методы в верхнем регистре возвращают логические координаты */
         int X() const;
         int& X();
         int Y() const;
         int& Y();
         
     private:
-        /* Internal data representation, in logical system */
+        /* Внутреннее представление данных, логическая сисетма */
         std::vector<double> _data;
 };
 

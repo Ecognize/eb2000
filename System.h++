@@ -1,32 +1,32 @@
-// TODO: heading comment here
+// TODO: Заголовочный комментарий сюда
 #ifndef _EB2K_SYSTEM_HPP_
 #define _EB2K_SYSTEM_HPP_
 
 #include "Vector.h++"
 //#include "Sound.h++"
-class Sound; // WARNING: stub
+class Sound; // WARNING: заглушка
 
 // TODO: DoxyGen
-/*  This class emulates the procedure-based approach to lowest system calls
-    while supporting the application's class hierarchy */
+/*  Этот класс эмулирует процедурно ориентированный подход к низкоуровневым вызовам,
+    при этом поддерживая всю иерархию классов приложения */
 class System
 {
     public:
-        /* Sound playing routines */
-        static void playSound(const Sound&);                // Plays the omnipositioned sound
-        static void playSound(const Sound&,const Vector&);  // Plays the positioned sound
+        /* Проигрывание звука */
+        static void playSound(const Sound&);                // Проигрывает непозиционированный звук
+        static void playSound(const Sound&,const Vector&);  // Проигрывает звук в указанной позиции
     private:
-        /* Limiting access to instantiation & deinstantiation */
+        /* Ограничиваем доступ к инстанциированию и деинстанциированию */
         System();
         ~System();
-        /* Singletone access */
+        /* Доступ к синглтону */
         static System& instance();
-        /* Disallowing copy constructor & assignement operator */
+        /* Запрещаем конструктор копирования и оператор присваивания */
         System(const System&) {}
         System& operator=(const System&) { return *this; }
         
     private:
-        /* TODO: implementation-dependent data here */
+        /* TODO: данные, заданные реализацией писать сюда */
 };
 
 #endif

@@ -1,10 +1,10 @@
 #include "System.h++"
 
-// TODO: commenting
+// TODO: комментарии
 
 System& System::instance()
 {
-    /* Creating a single instance */
+    /* Создаем единственную инстанцию */
     static System sys;
     return sys;
 }
