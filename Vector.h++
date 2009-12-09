@@ -5,9 +5,9 @@
 #include <vector>
 
 /* Координатная система представлена двумя способами или «представлениями»:
-    "экранное") стандартная декартовая система координат, нуль находится в левом нижнем углу,
+    «экранное») стандартная декартовая система координат, нуль находится в левом нижнем углу,
         расстояния и положения измеряются пикселями
-    "логическое") нормализированная декартова система координат, нуль находится в левом нижнем углу,
+    «логическое») нормализированная декартова система координат, нуль находится в левом нижнем углу,
         расстояния и положения измеряются частями от 1
 */
     
@@ -23,11 +23,20 @@ class Vector
         /* TODO: Математика & комментарии. Кто сделает — получит печеньку! */
         Vector();
         Vector(const Vector&);
-        Vector& operator=(const Vector&);
-        Vector& operator+=(const Vector&);
-        Vector& operator-=(const Vector&);
-        Vector operator+(const Vector&) const;
-        Vector operator-(const Vector&) const;
+        Vector& operator=(const Vector&);       // Присваивание векторов
+        Vector& operator+=(const Vector&);      // Присваивание суммы векторов
+        Vector& operator-=(const Vector&);      // Присваивание разницы векторов
+        Vector& operator*=(double);             // Увеличение вектора на число
+        Vector& operator/=(double);             // Сокращение вектора на число
+        Vector operator+(const Vector&) const;  // Сумма векторов
+        Vector operator-(const Vector&) const;  // Разница векторов
+        Vector operator/(double) const;         // Скалярное умножение на число, обратное аргументу
+        Vector operator*(double) const;         // Скалярное умножение на число
+        Vector operator*(const Vector&) const;  // Скалярное произведение векторов
+        bool operator==(const Vector&) const;   // Равны ли вектора
+        bool operator!=(const Vector&) const;   // Неравны ли вектора
+        void length() const;                    // Длина вектора
+        void normalize() const;                 // Нормализация вектора до единичной длины
         
         /*  TODO: Прокси-класс для неконтстантных методов. Тот, кто напишет получит еще печеньку!
             Прокси должна проверять аргумент на выход за рамки окна при присваивании:
@@ -39,10 +48,10 @@ class Vector
         int &y();
         
         /* Методы в верхнем регистре возвращают логические координаты */
-        int X() const;
-        int& X();
-        int Y() const;
-        int& Y();
+        double X() const;
+        double& X();
+        double Y() const;
+        double& Y();
         
     private:
         /* Внутреннее представление данных, логическая сисетма */

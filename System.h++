@@ -15,6 +15,10 @@ class System
         /* Проигрывание звука */
         static void playSound(const Sound&);                // Проигрывает непозиционированный звук
         static void playSound(const Sound&,const Vector&);  // Проигрывает звук в указанной позиции
+        
+        /* Работа с видео */
+        static int playableWidth();     // Длина игрового поля, в пикселах
+        static int playableHeight();    // Высота игрового поля, в пикселах
     private:
         /* Ограничиваем доступ к инстанциированию и деинстанциированию */
         System();
