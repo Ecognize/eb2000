@@ -8,4 +8,3 @@ System& System::instance()
     static System sys;
     return sys;
 }
-
