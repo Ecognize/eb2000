@@ -24,6 +24,7 @@ class System
         
         /* Функции оконной системы */
         static void messageBox(const std::string&);     // Окно сообщения
+        static void errorBox(const std::string&);       // Окно ошибки
         static bool questionBox(const std::string&);    // Окно «да/нет» вопроса
         
         /* Функции системы */

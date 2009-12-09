@@ -13,7 +13,7 @@ Exception::Severity Exception::severity() const { return _sev; }
 const std::string& ExceptionMessage::generateMessage() const { return _reason };
 
 /* Вспомогательные методы */
-void Exception::whine() const { System::messageBox(reason()); }
+void Exception::whine() const { System::errorBox(reason()); }
 
 void Exception::execute() const
 {
