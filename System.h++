@@ -2,15 +2,15 @@
 #ifndef _EB2K_SYSTEM_HPP_
 #define _EB2K_SYSTEM_HPP_
 
-#define _VERSION_	    1        	// Очень хотелось :)
-#define _CFG_HEADER_	"EB2KCFG"	// Хедер файла настроек
+//#define _VERSION_        1            // Очень хотелось :) elfy: в отдельный хедер, и 0, релиза не было же
+//#define _CFG_HEADER_    "EB2KCFG"    // Хедер файла настроек, elfy: Господи, что это?
 
 #include "Vector.h++"
 //#include "Sound.h++"
 
-class Sound; 	// WARNING: заглушка
-class Sprite;	// то же самое
-class Screen;	// —//—
+class Sound;     // WARNING: заглушка
+class Sprite;    // то же самое
+class Screen;    // —//—
 
 #include <string>
 
@@ -28,20 +28,20 @@ class System
         static int playableWidth();                         // Длина игрового поля, в пикселах
         static int playableHeight();                        // Высота игрового поля, в пикселах
 
-        static void flipScreen();	                        // Вывод буфера на экран
-    	static void clearScreen();	                        // Очистка экрана
+        static void flipScreen();                            // Вывод буфера на экран
+        static void clearScreen();                           // Очистка экрана
         
         /* Функции оконной системы */
         static void messageBox(const std::string&);         // Окно сообщения
         static void errorBox(const std::string&);           // Окно ошибки
         static bool questionBox(const std::string&);        // Окно «да/нет» вопроса
 
-    	/* Управление конфигурацией */
-	    static void saveConfig();			                // Записать настройки в файл
-    	static void loadConfig();			                // Или прочитать их
+        /* Управление конфигурацией */
+        static void saveConfig();                            // Записать настройки в файл
+        static void loadConfig();                            // Или прочитать их
         
         /* Функции системы */
-	    static void init();			    	                // Начать работу; проинициализировать либы
+        static void init();                                 // Начать работу; проинициализировать либы
         static void shutdown();                             // Завершить работу системы
     private:
         /* Ограничиваем доступ к инстанциированию и деинстанциированию */
@@ -56,21 +56,21 @@ class System
     private:
         /* TODO: данные, заданные реализацией, писать сюда */
 
-    	/* Видео */ 
+        /* Видео */ 
         Scree
         /* Миша, все это хуйня! Это в скрине уже тогда должно быть! */
-	    /*unsigned int hx;					// Аппаратный максимальный x
-    	unsigned int hy;					// Аппаратный максимальный y
-    	unsigned int bpp;					// Сколько бит на пиксел
-    	unsigned int vx;					// Виртуальный x
-    	unsigned int vy;					// Виртуальный y
+        /*unsigned int hx;                  // Аппаратный максимальный x
+        unsigned int hy;                    // Аппаратный максимальный y
+        unsigned int bpp;                   // Сколько бит на пиксел
+        unsigned int vx;                    // Виртуальный x
+        unsigned int vy;                    // Виртуальный y
         bool hmax;                          // Используется максимальное разрешение?*/
 
-    	/* Аудио */
+        /* Аудио */
         bool soundOn;                       // Включён ли звук?
-    	unsigned int mixerVolume;			// Главная громкость
+        unsigned int mixerVolume;           // Главная громкость
 
-	    /* Прочее */
+        /* Прочее */
 };
 
 #endif

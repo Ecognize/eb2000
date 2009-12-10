@@ -43,7 +43,7 @@ void System::errorBox(const std::string& s)
 bool System::questionBox(const std::string& s)
 {
     #if (REPORT_MODE=="standard")
-    std::cout<<s<<"? (yes/no)"<<endl;
+    std::cout<<s<<"? (yes/no)"<<std::endl;
     bool res=false;
     std::string& p="";
     for (;;)
@@ -59,7 +59,7 @@ bool System::questionBox(const std::string& s)
             res=true; break;
         }
         /* Только если первый ответ — фейл */
-        std::cout<<"(yes/no)?"<<endl;
+        std::cout<<"(yes/no)?"<<std::endl;
     }
     return res;
     #endif
