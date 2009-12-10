@@ -23,6 +23,8 @@ class Vector
         /* TODO: Математика & комментарии. Кто сделает — получит печеньку! */
         Vector();
         Vector(const Vector&);
+        Vector(int x,int y);
+        Vector(double x,double y);              // WARNING: перобразования типов же!
         Vector& operator=(const Vector&);       // Присваивание векторов
         Vector& operator+=(const Vector&);      // Присваивание суммы векторов
         Vector& operator-=(const Vector&);      // Присваивание разницы векторов
