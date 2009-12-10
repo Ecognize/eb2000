@@ -29,7 +29,7 @@ class Exception
         
     protected:
         /* Виртуальный интерфейс для наследников */
-        virtual const string& genearateMessage() const =0;  // Вернуть итоговое сообщение пользователю
+        virtual const string& generateMessage() const =0;  // Вернуть итоговое сообщение пользователю
         virtual void customExecute() {};                    // Особые действия во время «исполнения исключения»
 };
 

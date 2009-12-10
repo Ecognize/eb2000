@@ -28,6 +28,7 @@ class System
         static bool questionBox(const std::string&);    // Окно «да/нет» вопроса
         
         /* Функции системы */
+	static void init();				// Начать работу; проинициализировать либы
         static void shutdown();                         // Завершить работу системы
     private:
         /* Ограничиваем доступ к инстанциированию и деинстанциированию */
