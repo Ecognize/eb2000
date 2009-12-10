@@ -10,7 +10,7 @@
 
 class Sound; 	// WARNING: заглушка
 class Sprite;	// то же самое
-class VScreen;	// виртуальный экран
+class Screen;	// —//—
 
 #include <string>
 
@@ -57,20 +57,20 @@ class System
         /* TODO: данные, заданные реализацией, писать сюда */
 
     	/* Видео */ 
-	    unsigned int hx;					// Аппаратный максимальный x
+        Scree
+        /* Миша, все это хуйня! Это в скрине уже тогда должно быть! */
+	    /*unsigned int hx;					// Аппаратный максимальный x
     	unsigned int hy;					// Аппаратный максимальный y
     	unsigned int bpp;					// Сколько бит на пиксел
     	unsigned int vx;					// Виртуальный x
     	unsigned int vy;					// Виртуальный y
-        bool hmax;                          // Используется максимальное разрешение?
+        bool hmax;                          // Используется максимальное разрешение?*/
 
     	/* Аудио */
         bool soundOn;                       // Включён ли звук?
     	unsigned int mixerVolume;			// Главная громкость
 
 	    /* Прочее */
-    	//bool fail;				        	// На случай критических ошибок
-        // это нам нахрен не надо, у нас исключения же!
 };
 
 #endif
