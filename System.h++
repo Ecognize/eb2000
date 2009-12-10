@@ -5,7 +5,7 @@
 #include "Vector.h++"
 //#include "Sound.h++"
 class Sound; // WARNING: заглушка
-
+class Sprite;// то же самое
 #include <string>
 
 // TODO: DoxyGen
@@ -21,11 +21,18 @@ class System
         /* Работа с видео */
         static int playableWidth();     // Длина игрового поля, в пикселах
         static int playableHeight();    // Высота игрового поля, в пикселах
+
+	static void flipScreen();	// Вывод буфера на экран
+	static void clearScreen();	// Очистка экрана
         
         /* Функции оконной системы */
         static void messageBox(const std::string&);     // Окно сообщения
         static void errorBox(const std::string&);       // Окно ошибки
         static bool questionBox(const std::string&);    // Окно «да/нет» вопроса
+
+	/* Конфигурация */
+	static void saveConfig();			// Записать настройки в файл
+	static void loadConfig();			// И прочитать их
         
         /* Функции системы */
 	static void init();				// Начать работу; проинициализировать либы
@@ -42,6 +49,11 @@ class System
         
     private:
         /* TODO: данные, заданные реализацией писать сюда */
+	int hx;						// Аппаратный максимальный x
+	int hy;						// Аппаратный максимальный y
+	int bpp;					// Сколько бит на пиксел
+	int vx;						// Виртуальный x
+	int vy;						// Виртуальный y
 };
 
 #endif
