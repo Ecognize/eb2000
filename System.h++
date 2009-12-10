@@ -4,8 +4,9 @@
 
 #include "Vector.h++"
 //#include "Sound.h++"
-class Sound; // WARNING: заглушка
-class Sprite;// то же самое
+class Sound; 	// WARNING: заглушка
+class Sprite;	// то же самое
+class VScreen;	// виртуальный экран
 #include <string>
 
 // TODO: DoxyGen
@@ -30,7 +31,7 @@ class System
         static void errorBox(const std::string&);       // Окно ошибки
         static bool questionBox(const std::string&);    // Окно «да/нет» вопроса
 
-	/* Конфигурация */
+	/* Управление конфигурацией */
 	static void saveConfig();			// Записать настройки в файл
 	static void loadConfig();			// И прочитать их
         
@@ -48,7 +49,7 @@ class System
         System& operator=(const System&) { return *this; }
         
     private:
-        /* TODO: данные, заданные реализацией писать сюда */
+        /* TODO: данные, заданные реализацией, писать сюда */
 	int hx;						// Аппаратный максимальный x
 	int hy;						// Аппаратный максимальный y
 	int bpp;					// Сколько бит на пиксел
