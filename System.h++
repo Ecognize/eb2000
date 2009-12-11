@@ -1,16 +1,20 @@
-// TODO: Заголовочный комментарий сюда
+﻿// TODO: Заголовочный комментарий сюда
 #ifndef _EB2K_SYSTEM_HPP_
 #define _EB2K_SYSTEM_HPP_
 
 //#define _VERSION_        1            // Очень хотелось :) elfy: в отдельный хедер, и 0, релиза не было же
-//#define _CFG_HEADER_    "EB2KCFG"    // Хедер файла настроек, elfy: Господи, что это?
+                                        //                   xela: а что будет ещё в том хедере?
+//#define _CFG_HEADER_    "EB2KCFG"     // Хедер файла настроек, elfy: Господи, что это?
+                                        //                       xela: "GGE sprites v.1.6" меня вдохновил )
 
 #include "Vector.h++"
+#include "Screen.h++"
 //#include "Sound.h++"
+
 
 class Sound;     // WARNING: заглушка
 class Sprite;    // то же самое
-class Screen;    // —//—
+
 
 #include <string>
 
@@ -28,8 +32,10 @@ class System
         static int playableWidth();                         // Длина игрового поля, в пикселах
         static int playableHeight();                        // Высота игрового поля, в пикселах
 
-        static void flipScreen();                            // Вывод буфера на экран
-        static void clearScreen();                           // Очистка экрана
+	// Тогда уже пусть так
+        // UPD: Может это тоже в скрин убрать?
+        static void flipScreen(const Screen&);              // Вывод буфера на экран
+        static void clearScreen(const Screen&);             // Очистка экрана
         
         /* Функции оконной системы */
         static void messageBox(const std::string&);         // Окно сообщения
@@ -57,16 +63,13 @@ class System
         /* TODO: данные, заданные реализацией, писать сюда */
 
         /* Видео */ 
-        Scree
+        Screen screen;
+
         /* Миша, все это хуйня! Это в скрине уже тогда должно быть! */
-        /*unsigned int hx;                  // Аппаратный максимальный x
-        unsigned int hy;                    // Аппаратный максимальный y
-        unsigned int bpp;                   // Сколько бит на пиксел
-        unsigned int vx;                    // Виртуальный x
-        unsigned int vy;                    // Виртуальный y
-        bool hmax;                          // Используется максимальное разрешение?*/
+	// вот ^^^^^^
 
         /* Аудио */
+	// а это тогда уже разве не в саунде?
         bool soundOn;                       // Включён ли звук?
         unsigned int mixerVolume;           // Главная громкость
 
