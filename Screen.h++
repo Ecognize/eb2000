@@ -16,7 +16,9 @@ class Color;
 
 class Screen
 {
-
+    public:
+        /* Пользовательские функции */
+        static void setVideoMode();
     private:
         /* Физические данные, описание видеорежима */
         unsigned int hx;                    // Аппаратный используемый x
@@ -42,6 +44,7 @@ class Screen
 
         /* Собсно сами точки */
         std::vector<Color> _surface;        // Экранный буфер
+                                            // P.S: Как его сделать 2D? std::vector<vector <Color>> _surface ? И как тогда обращаться к нему?
 
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)
