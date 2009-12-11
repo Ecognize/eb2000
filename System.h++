@@ -78,6 +78,7 @@ class System
     // elfy: кстати, как у тебя дела?
     // В какой сфере? :)
     // elfy: в сфере Огня :)))
+    // xela: O_o :))) кипят)
         bool soundOn;                       // Включён ли звук?
         unsigned int mixerVolume;           // Главная громкость
 
