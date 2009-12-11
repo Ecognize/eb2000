@@ -14,7 +14,7 @@ System::System() :
     soundOn(true),     // Звук по умолчанию включён
     mixerVolume(50)    // Средняя громкость
 {
-
+    loadConfig();       //Пропарсим конфиг
 }
 
 System& System::instance()

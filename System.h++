@@ -33,6 +33,8 @@ class System
         // Тогда уже пусть так
         // elfy: ненене, это делегация System::*Screen, в Screen::*Screen
         // рядовые классы не должны знать о скрине
+        // xela: pilot.jpg
+
         static void flipScreen();                               // Вывод буфера на экран
         static void clearScreen();                              // Очистка экрана
         static void drawSprite(const Sprite&, const Point&);   // Нарисовать спрайт на данной позиции
@@ -69,6 +71,7 @@ class System
     // а это тогда уже разве не в саунде?
     // elfy: можно и в саунде, только for the love of God, поставь в редакторе 4 пробела, а не таб,
     // или давай уже везде табы
+    // xela: хорошо, 4 пробела. Я кстати начал входить во вкус)
         bool soundOn;                       // Включён ли звук?
         unsigned int mixerVolume;           // Главная громкость
 
