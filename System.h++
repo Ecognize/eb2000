@@ -4,8 +4,10 @@
 
 //#define _VERSION_        1            // Очень хотелось :) elfy: в отдельный хедер, и 0, релиза не было же
                                         //                   xela: а что будет ещё в том хедере?
+                                        //                   elfy: посмотри config.h в любой гнутой проге
 //#define _CFG_HEADER_    "EB2KCFG"     // Хедер файла настроек, elfy: Господи, что это?
                                         //                       xela: "GGE sprites v.1.6" меня вдохновил )
+                                        //                       elfy: но я так и не вьехал
 
 #include "Vector.h++"
 #include "Screen.h++"
