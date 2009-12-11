@@ -41,10 +41,13 @@ class Screen
                                             // подробнее см. xela's features @ fraxos
 
         /* Собсно сами точки */
-        std::vector<color> _psurface;       // физический экран
-        std::vector<color> _vsurface;       // виртуальный экран
+        /*
+	//std::vector<color> _psurface;       // физический экран
+        //std::vector<color> _vsurface;       // виртуальный экран
                                             // в зависимости от umode flipScreen() из System.h++ 
-                                            // будет брать тот или другой экран
+                                            // будет брать тот или другой экран*/
+        std::vector<color> _surface;         // Что-то я загнал, экран/буфер у нас один )) и просто
+                                             // umode это scaling флаг 
 
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)
