@@ -1,7 +1,5 @@
-﻿#ifndef _EB2K_SCREEN_HPP
+#ifndef _EB2K_SCREEN_HPP
 #define _EB2K_SCREEN_HPP
-
-#define _base	320    // для v-scaling
 
 // main comment:
 // очень важный класс. :)
@@ -10,14 +8,7 @@
 //#include "Color.h++" пока хз, нужно ли помещать структуры цвета в отдельный хедер
 //Наверное, да, для тех же спрайтов, например.
 
-// Описание одной точки
-typedef struct 
-{
-    unsigned short r;
-    unsigned short g;
-    unsigned short b;
-    unsigned short a;
-}color;
+class Color;
 
 class Screen
 {
@@ -33,7 +24,8 @@ class Screen
         unsigned int vx;                    // Виртуальный x 
         unsigned int vy;                    // Виртуальный y
         unsigned int vratio;                // Размер точки для виртуального экрана
-
+        
+        static const int _base;             // для v-scaling, устанавливается в файле реализации
         enum umode = {_clean, _vscreen};    // Используемый режим переноса виртуального буфера на экран:
                                             // _clean - все виртуальные точки == физическим
                                             // _vscreen - эмуляция 320x[200/240/256],
@@ -46,7 +38,7 @@ class Screen
         //std::vector<color> _vsurface;       // виртуальный экран
                                             // в зависимости от umode flipScreen() из System.h++ 
                                             // будет брать тот или другой экран*/
-        std::vector<color> _surface;         // Что-то я загнал, экран/буфер у нас один )) и просто
+        std::vector<Color> _surface;         // Что-то я загнал, экран/буфер у нас один )) и просто
                                              // umode это scaling флаг 
 
         /* Прочее */

@@ -1,4 +1,4 @@
-﻿// TODO: Заголовочный комментарий сюда
+// TODO: Заголовочный комментарий сюда
 #ifndef _EB2K_SYSTEM_HPP_
 #define _EB2K_SYSTEM_HPP_
 
@@ -32,10 +32,12 @@ class System
         static int playableWidth();                         // Длина игрового поля, в пикселах
         static int playableHeight();                        // Высота игрового поля, в пикселах
 
-	// Тогда уже пусть так
-        // UPD: Может это тоже в скрин убрать?
-        static void flipScreen(const Screen&);              // Вывод буфера на экран
-        static void clearScreen(const Screen&);             // Очистка экрана
+        // Тогда уже пусть так
+        // elfy: ненене, это делегация System::*Screen, в Screen::*Screen
+        // рядовые классы не должны знать о скрине
+        static void flipScreen();                               // Вывод буфера на экран
+        static void clearScreen();                              // Очистка экрана
+        static void drawSprite(const Sprite&, const Vector&);   // Нарисовать спрайт на данной позиции
         
         /* Функции оконной системы */
         static void messageBox(const std::string&);         // Окно сообщения
@@ -65,11 +67,10 @@ class System
         /* Видео */ 
         Screen screen;
 
-        /* Миша, все это хуйня! Это в скрине уже тогда должно быть! */
-	// вот ^^^^^^
-
         /* Аудио */
-	// а это тогда уже разве не в саунде?
+    // а это тогда уже разве не в саунде?
+    // elfy: можно и в саунде, только for the love of God, поставь в редакторе 4 пробела, а не таб,
+    // или давай уже везде табы
         bool soundOn;                       // Включён ли звук?
         unsigned int mixerVolume;           // Главная громкость
 
