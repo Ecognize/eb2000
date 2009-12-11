@@ -4,6 +4,7 @@
 
 //#include "Defs.h++"
 //так пойдёт?
+// elfy: вполне, только пока там ничего нет
 
 #include "Vector.h++"
 #include "Screen.h++"
@@ -34,6 +35,7 @@ class System
         // elfy: ненене, это делегация System::*Screen, в Screen::*Screen
         // рядовые классы не должны знать о скрине
         // xela: pilot.jpg
+        // elfy: man Бублик
 
         static void flipScreen();                               // Вывод буфера на экран
         static void clearScreen();                              // Очистка экрана
@@ -72,6 +74,7 @@ class System
     // elfy: можно и в саунде, только for the love of God, поставь в редакторе 4 пробела, а не таб,
     // или давай уже везде табы
     // xela: хорошо, 4 пробела. Я кстати начал входить во вкус)
+    // elfy: кстати, как у тебя дела?
         bool soundOn;                       // Включён ли звук?
         unsigned int mixerVolume;           // Главная громкость
 
