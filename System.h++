@@ -26,7 +26,7 @@ class System
     public:
         /* Проигрывание звука */
         static void playSound(const Sound&);                // Проигрывает непозиционированный звук
-        static void playSound(const Sound&,const Vector&);  // Проигрывает звук в указанной позиции
+        static void playSound(const Sound&,const Point&);  // Проигрывает звук в указанной позиции
         
         /* Работа с видео */
         static int playableWidth();                         // Длина игрового поля, в пикселах
@@ -37,7 +37,7 @@ class System
         // рядовые классы не должны знать о скрине
         static void flipScreen();                               // Вывод буфера на экран
         static void clearScreen();                              // Очистка экрана
-        static void drawSprite(const Sprite&, const Vector&);   // Нарисовать спрайт на данной позиции
+        static void drawSprite(const Sprite&, const Point&);   // Нарисовать спрайт на данной позиции
         
         /* Функции оконной системы */
         static void messageBox(const std::string&);         // Окно сообщения
