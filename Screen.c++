@@ -7,9 +7,12 @@ const int Screen::_base = 320;
 
 Screen::Screen()
 {
-    info.x  = 800;
-    info.y  = 600;
-    info.bpp = 16;
+    currentMode.x  = 800;
+    currentMode.y  = 600;
+    currentMode.bpp = 16;
+
+    umode = _vscreen;
+
 }
 
 #endif
