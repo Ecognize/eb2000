@@ -12,8 +12,8 @@ class Color;
 typedef struct  // Пусть это будет именно struct
 {
         /* Физические данные, описание видеорежима */
-        unsigned int hx;                    // Аппаратный используемый x
-        unsigned int hy;                    // Аппаратный используемый y
+        unsigned int x;                    // Аппаратный используемый x
+        unsigned int y;                    // Аппаратный используемый y
         unsigned int bpp;                   // Сколько бит на пиксел
 } vi;
 
@@ -48,4 +48,23 @@ class Screen
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)
 };
+
+/* Предполагаемый вариант использования этого класса:
+
+    vi my;
+    my.x = 1024;
+    my.y = 768;
+    my.bpp = 32;
+
+    setVideoMode(my);       <-- тут собсно устанавливаем видеорежим
+    setScaling(_vscreen);   <-- а тут устанавливаются значения vx, vy, vratio:
+                            vratio = my.x / _base;
+                            vx = _base;
+                            vy = y / vratio;
+
+                            и сам буфер теперь выглядит так: _surface[vx][vy]
+
+    Иначе говоря, размеры _surface определяются при вызове этой функции
+
+*/
 #endif

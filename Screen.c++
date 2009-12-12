@@ -7,8 +7,8 @@ const int Screen::_base = 320;
 
 Screen::Screen()
 {
-    info.hx  = 800;
-    info.hy  = 600;
+    info.x  = 800;
+    info.y  = 600;
     info.bpp = 16;
 }
 
