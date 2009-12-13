@@ -31,6 +31,13 @@ class Screen
         /*static*/ void setScaling(umode mode);
         const VideoMode getMaxVideoMode();
 
+        // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс        
+        enum umode = {_clean, _vscreen};    // Используемый режим переноса виртуального буфера на экран:
+                                            // _clean - все виртуальные точки == физическим
+                                            // _vscreen - эмуляция 320x[200/240/256],
+                                            // каждая физическая точка увеличивается в [vratio = hx/_base] раз
+                                            // подробнее см. xela's features @ fraxos
+
     private:
         VideoMode currentMode;                     // Информация о видеорежиме, используемом в данный момент
         bool hmax;                          // Используется ли максимальное разрешение?
@@ -41,12 +48,6 @@ class Screen
         unsigned int vratio;                // Размер точки для виртуального экрана
         
         static const int _base;             // для v-scaling, устанавливается в файле реализации
-
-        enum umode = {_clean, _vscreen};    // Используемый режим переноса виртуального буфера на экран:
-                                            // _clean - все виртуальные точки == физическим
-                                            // _vscreen - эмуляция 320x[200/240/256],
-                                            // каждая физическая точка увеличивается в [vratio = hx/_base] раз
-                                            // подробнее см. xela's features @ fraxos
 
         /* Собсно сами точки */
         std::vector<Color> _surface;        // Экранный буфер
