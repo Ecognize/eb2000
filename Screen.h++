@@ -1,4 +1,4 @@
-#ifndef _EB2K_SCREEN_HPP
+﻿#ifndef _EB2K_SCREEN_HPP
 #define _EB2K_SCREEN_HPP
 
 // main comment:
@@ -13,6 +13,9 @@ class VideoMode  // Пусть это будет именно struct
 {                // elfy: автохуй
     public:
         VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) { /* TODO: проверки на вменяемость*/ }
+                                                                    /* xela: если ты хочешь эти проверки реализовать через исключения,
+                                                                       то я против. Сгенерится лишний код, никому нахуй не нужный. 
+                                                                       К тому же, устанавливать эти значения будем только мы. */
         unsigned w() const { return _x; }
         unsigned h() const { return _y; }
         unsigned bpp() const { return _bpp; }
@@ -20,18 +23,24 @@ class VideoMode  // Пусть это будет именно struct
     /* Физические данные, описание видеорежима */
     unsigned int _x;                    // Аппаратный используемый x
     unsigned int _y;                    // Аппаратный используемый y
-    unsigned int _bpp;                   // Сколько бит на пиксел
+    unsigned int _bpp;                  // Сколько бит на пиксел
 };
 
 class Screen
 {
     public:
-        /* Пользовательские функции */ // elfy: нахрена static?
-        /*static*/ void setVideoMode(const VideoMode& mode);
-        /*static*/ void setScaling(umode mode);
-        const VideoMode getMaxVideoMode();
+        /* Пользовательские функции */
+        void setVideoMode(const VideoMode& mode);    // установить видеорежим
+        const VideoMode getMaxVideoMode();           // получить максимально возможный видеорежим
+        void setScaling(umode mode);                 // установить параметры переноса буфера
 
-        // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс        
+        /* Графика */
+        void putPixel(unsigned int x, unsigned int y, Color color);    // Поставить точку
+        Color getPixel(unsigned int x, unsigned int y);                // Узнать цвет точки
+
+        // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс
+        // xela: например? чем тебе эти не нравятся? константы как константы.
+        
         enum umode = {_clean, _vscreen};    // Используемый режим переноса виртуального буфера на экран:
                                             // _clean - все виртуальные точки == физическим
                                             // _vscreen - эмуляция 320x[200/240/256],
@@ -39,12 +48,12 @@ class Screen
                                             // подробнее см. xela's features @ fraxos
 
     private:
-        VideoMode currentMode;                     // Информация о видеорежиме, используемом в данный момент
+        VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
         bool hmax;                          // Используется ли максимальное разрешение?
 
         /* "Игровые" или виртуальные данные, описание игрового экрана */
-        unsigned int vx;                    // Виртуальный x 
-        unsigned int vy;                    // Виртуальный y
+        unsigned int vw;                    // Виртуальный x 
+        unsigned int vh;                    // Виртуальный y
         unsigned int vratio;                // Размер точки для виртуального экрана
         
         static const int _base;             // для v-scaling, устанавливается в файле реализации
@@ -59,7 +68,7 @@ class Screen
 /* Предполагаемый вариант использования этого класса:
 
     vi my;          <-- elfy: Миша, это полное гавно! данные нужно инициализировать
-    my.x = 1024;
+    my.x = 1024;        xela: Похуй. Это написано как пример, и акцент тут на setScaling.
     my.y = 768;
     my.bpp = 32;
 
