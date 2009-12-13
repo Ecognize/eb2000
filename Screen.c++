@@ -5,13 +5,14 @@
 
 const int Screen::_base = 320;
 
-Screen::Screen()
+/* elfy: БЛДЖАД man инициализация */
+Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 {
-    currentMode.x  = 800;
+    /*currentMode.x  = 800;
     currentMode.y  = 600;
     currentMode.bpp = 16;
 
-    umode = _vscreen;
+    umode = _vscreen; === ХУИТИЩА */
 
 }
 
