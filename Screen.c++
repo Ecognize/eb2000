@@ -1,4 +1,4 @@
-﻿#ifndef _EB2K_SCREEN_CPP
+#ifndef _EB2K_SCREEN_CPP
 #define _EB2K_SCREEN_CPP
 
 #include "Screen.h++"
@@ -36,7 +36,7 @@ void Screen::setScaling(umode mode)
     /* здесь как-нибудь установить размеры _surface ([vw] * [xh])*/
 }
 
-void Screen::putPixel(unsigned int x, unsigned int y, Color color)
+void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) // константные ссылки блядь :)
 {
     _surface[x][y] = color;
 }
