@@ -36,7 +36,7 @@ void Screen::setScaling(umode mode)
     /* здесь как-нибудь установить размеры _surface ([vw] * [xh])*/
 }
 
-void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) // константные ссылки блядь :)
+void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) 
 {
     _surface[x][y] = color;
 }

@@ -35,7 +35,7 @@ class Screen
         void setScaling(umode mode);                 // установить параметры переноса буфера
 
         /* Графика */
-        void putPixel(unsigned int x, unsigned int y, Color color);    // Поставить точку
+        void putPixel(unsigned int x, unsigned int y, const Color& color);    // Поставить точку
         Color getPixel(unsigned int x, unsigned int y);                // Узнать цвет точки
 
         // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс
