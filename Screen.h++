@@ -1,21 +1,15 @@
 ﻿#ifndef _EB2K_SCREEN_HPP
 #define _EB2K_SCREEN_HPP
 
-// main comment:
-// очень важный класс. :)
-
 #include <vector>
-//#include "Color.h++"
+#include "Color.h++"
 
-class Color;
 
-class VideoMode  // Пусть это будет именно struct 
-{                // elfy: автохуй
+class VideoMode
+{
     public:
-        VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) { /* TODO: проверки на вменяемость*/ }
-                                                                    /* xela: если ты хочешь эти проверки реализовать через исключения,
-                                                                       то я против. Сгенерится лишний код, никому нахуй не нужный. 
-                                                                       К тому же, устанавливать эти значения будем только мы. */
+        VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) {  }
+                                                                    
         unsigned w() const { return _x; }
         unsigned h() const { return _y; }
         unsigned bpp() const { return _bpp; }
@@ -36,7 +30,7 @@ class Screen
 
         /* Графика */
         void putPixel(unsigned int x, unsigned int y, const Color& color);    // Поставить точку
-        Color getPixel(unsigned int x, unsigned int y);                // Узнать цвет точки
+        Color getPixel(unsigned int x, unsigned int y);                       // Узнать цвет точки
 
         // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс
         // xela: например? чем тебе эти не нравятся? константы как константы.
