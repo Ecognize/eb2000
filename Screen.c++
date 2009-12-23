@@ -5,12 +5,52 @@
 
 const int Screen::_base = 320;
 
-/* elfy: БЛДЖАД man инициализация */
+/* Конструктор и деструктор */
 Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 {
-    // чем же хуитища?
+
 }
 
+~Screen::Screen()
+{
+    SDL_FreeSurface(_sdlsurface);
+    _sdlsurface = NULL;
+}
+
+
+
+/* Работа с видеорежимами */
+
+// Узнать (максимальный) используемый режим
+const VideoMode System::getMaxVideoMode()
+{
+    const SDL_VideoInfo* s = SDL_GetVideoInfo();
+    return VideoMode(s.current_w, s.current_h, s->vfmt.bitsPerPixel);
+}
+
+// Установить видеорежим
+void setVideoMode(const VideoMode& mode)
+{
+    // TODO: Сделать нормальные ошибки
+
+    int bpp = SDL_VideoModeOK(mode.x(), mode.y(), mode.bpp(), SDL_FULLSCREEN);  // Определяем оптимальную глубину цвета
+
+    if (bpp == 0)   // Режим не доступен
+    {
+        std::cerr<<"Mode is not available.";
+        //exit(-1);
+    }
+
+    _sdlsurface = SDL_SetVideoMode(mode.x(), mode.y(), bpp, SDL_FULLSCREEN);    // Установим режим
+
+    if(_sdlsurface == NULL)
+        std::cerr<<"Can not set videomode.";
+
+    // Заполним инфо о режиме
+    currentMode(mode.x(), mode.y(), bpp);
+}
+
+// Установить сглаживание
 void Screen::setScaling(umode mode)
 {
     switch(mode)
@@ -36,18 +76,21 @@ void Screen::setScaling(umode mode)
     /* здесь как-нибудь установить размеры _surface ([vw] * [xh])*/
 }
 
+// Поставить точку
 void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) 
 {
     _surface[x][y] = color;
 }
 
+// Узнать цвет точки
 Color Screen::getPixel(unsigned int x, unsigned int y)
 {
     return _surface[x][y];
 }
 
-// Графические примитивы
+/* Графические примитивы */
 
+// Линия
 void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
 {
     int dy = y1 - y0;
@@ -93,6 +136,7 @@ void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned in
     }
 }
 
+// Рамка
 void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
 {
     int x = x0;
@@ -109,6 +153,7 @@ void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned in
     }
 }
 
+// Квадрат
 void Screen::bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
 {
     for(x0; x0 <= x1; x0++ )

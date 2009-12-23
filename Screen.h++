@@ -2,6 +2,8 @@
 #define _EB2K_SCREEN_HPP
 
 #include <vector>
+
+#include "SDL.h"
 #include "Color.h++"
 
 
@@ -23,6 +25,9 @@ class VideoMode
 class Screen
 {
     public:
+        Screen();
+        ~Screen();
+
         /* Пользовательские функции */
         void setVideoMode(const VideoMode& mode);    // установить видеорежим
         const VideoMode getMaxVideoMode();           // получить максимально возможный видеорежим
@@ -59,6 +64,9 @@ class Screen
         /* Собсно сами точки */
         std::vector<Color> _surface;        // Экранный буфер
                                             // TODO: сделать его 2D
+
+        SDL_Surface * _sdlsurface;          // SDL-буфер
+
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)
 };
