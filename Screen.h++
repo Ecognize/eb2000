@@ -1,4 +1,4 @@
-﻿#ifndef _EB2K_SCREEN_HPP
+#ifndef _EB2K_SCREEN_HPP
 #define _EB2K_SCREEN_HPP
 
 #include <vector>
@@ -29,8 +29,12 @@ class Screen
         void setScaling(umode mode);                 // установить параметры переноса буфера
 
         /* Графика */
-        void putPixel(unsigned int x, unsigned int y, const Color& color);    // Поставить точку
-        Color getPixel(unsigned int x, unsigned int y);                       // Узнать цвет точки
+        void putPixel(unsigned int x, unsigned int y, const Color& color);                                  // Поставить точку
+        Color getPixel(unsigned int x, unsigned int y);                                                     // Узнать цвет точки
+
+        void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Линия
+        void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Рамка
+        void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);   // Закрашенный квадрат
 
         // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс
         // xela: например? чем тебе эти не нравятся? константы как константы.
