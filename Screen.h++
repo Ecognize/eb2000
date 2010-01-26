@@ -62,8 +62,8 @@ class Screen
         static const int _base;             // для v-scaling, устанавливается в файле реализации
 
         /* Собсно сами точки */
-        std::vector<Color> _surface;        // Экранный буфер
-                                            // TODO: сделать его 2D
+        std::vector < vector <Color> > _surface; // Экранный буфер
+                                            
 
         SDL_Surface * _sdlsurface;          // SDL-буфер
 
