@@ -73,8 +73,17 @@ void Screen::setScaling(umode mode)
         break;
     }
 
-    /* здесь как-нибудь установить размеры _surface ([vw] * [xh])*/
+    for (int i = 0; i < vh; i++ )
+    {
+        _surface.push_back( vector <Color>() );
+	
+	for(int j = 0; j < vw; j++ )
+	    _surface[i].push_back(_color_black);
+    }
+    
+    /* ^^^^ Setting size of _surface to [vw] * [vh])*/
 }
+
 
 // Поставить точку
 void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) 
