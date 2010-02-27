@@ -1,6 +1,9 @@
 #include "System.h++"
 #include <iostream>
 
+
+#include "SDL.h"
+
 /* Важные директивы препроцессора: 
     • REPORT_MODE — способ отображения сообщений
         => standard — стандартные потоки I/O
@@ -63,4 +66,31 @@ bool System::questionBox(const std::string& s)
     }
     return res;
     #endif
+}
+
+// инициализация
+static void System::init()
+{
+    if ( SDL_Init(SDL_INIT_AUDIO|SDL_INIT_VIDEO) < 0 )
+        errorBox("Error while initialising SDL.");
+}
+
+// завершаем работу
+static void System::shutdown()
+{
+    SDL_Quit();
+}
+
+// Перенос Screen::_surface на физический экран
+static void System::flipScreen()
+{
+    switch(screen.umode)
+    {
+        case _clean:
+        break;
+
+
+        case _vscreen:
+        break;
+    }
 }

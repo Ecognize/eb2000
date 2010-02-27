@@ -1,21 +1,17 @@
-﻿#ifndef _EB2K_SCREEN_HPP
+#ifndef _EB2K_SCREEN_HPP
 #define _EB2K_SCREEN_HPP
 
-// main comment:
-// очень важный класс. :)
-
 #include <vector>
-//#include "Color.h++"
 
-class Color;
+#include "SDL.h"
+#include "Color.h++"
 
-class VideoMode  // Пусть это будет именно struct 
-{                // elfy: автохуй
+
+class VideoMode
+{
     public:
-        VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) { /* TODO: проверки на вменяемость*/ }
-                                                                    /* xela: если ты хочешь эти проверки реализовать через исключения,
-                                                                       то я против. Сгенерится лишний код, никому нахуй не нужный. 
-                                                                       К тому же, устанавливать эти значения будем только мы. */
+        VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) {  }
+                                                                    
         unsigned w() const { return _x; }
         unsigned h() const { return _y; }
         unsigned bpp() const { return _bpp; }
@@ -29,19 +25,27 @@ class VideoMode  // Пусть это будет именно struct
 class Screen
 {
     public:
+        Screen();
+        ~Screen();
+
+        enum umode {_clean, _vscreen};
         /* Пользовательские функции */
         void setVideoMode(const VideoMode& mode);    // установить видеорежим
         const VideoMode getMaxVideoMode();           // получить максимально возможный видеорежим
         void setScaling(umode mode);                 // установить параметры переноса буфера
 
         /* Графика */
-        void putPixel(unsigned int x, unsigned int y, Color color);    // Поставить точку
-        Color getPixel(unsigned int x, unsigned int y);                // Узнать цвет точки
+        void putPixel(unsigned int x, unsigned int y, const Color& color);                                  // Поставить точку
+        Color getPixel(unsigned int x, unsigned int y);                                                     // Узнать цвет точки
+
+        void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Линия
+        void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Рамка
+        void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);   // Закрашенный квадрат
 
         // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс
         // xela: например? чем тебе эти не нравятся? константы как константы.
         
-        enum umode = {_clean, _vscreen};    // Используемый режим переноса виртуального буфера на экран:
+        //enum umode = {_clean, _vscreen};    // Используемый режим переноса виртуального буфера на экран:
                                             // _clean - все виртуальные точки == физическим
                                             // _vscreen - эмуляция 320x[200/240/256],
                                             // каждая физическая точка увеличивается в [vratio = hx/_base] раз
@@ -59,8 +63,11 @@ class Screen
         static const int _base;             // для v-scaling, устанавливается в файле реализации
 
         /* Собсно сами точки */
-        std::vector<Color> _surface;        // Экранный буфер
-                                            // TODO: сделать его 2D
+        std::vector < vector <Color> > _surface; // Экранный буфер
+                                            
+
+        SDL_Surface * _sdlsurface;          // SDL-буфер
+
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)
 };
