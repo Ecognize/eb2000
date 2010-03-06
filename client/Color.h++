@@ -11,8 +11,18 @@ class Color
         unsigned b() { return _b; }
         unsigned a() { return _a; }
 
-        unsigned int rgb2uint();
-
+        unsigned int rgb2uint(); // elfy: я не понимаю суть этой функции, напиши плиз
+        
+        /* Идеальные цветовые константы */
+        // elfy: я не знаю пока зачем это, просто рефакторю код, все вопросы к xela
+        static const Color& Black;
+        static const Color& White;
+        static const Color& Red;
+        static const Color& Green;
+        static const Color& Blue;
+        // elfy: g++ может тут и без ссылок, но пусть пока будет так, безопаснее по-моему.
+        
+	// elfy: тут нужно написать хотя бы парочку операторов для цветов, смешивание, AND/OR итд, мне кажется
     private:
         unsigned short _r;
         unsigned short _g;
