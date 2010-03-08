@@ -12,7 +12,8 @@ class Color
         unsigned a() { return _a; }
 
         unsigned int rgb2uint(); // elfy: я не понимаю суть этой функции, напиши плиз
-        
+                                 // xela: for SDL purposes only
+
         /* Идеальные цветовые константы */
         // elfy: я не знаю пока зачем это, просто рефакторю код, все вопросы к xela
         static const Color& Black;
