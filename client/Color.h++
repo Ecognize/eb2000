@@ -6,13 +6,13 @@ class Color
     public:
         Color(int r, int g, int b, int a = 0) : _r(r), _g(g), _b(b), _a(a) {  }
 
-        unsigned r() { return _r; }
-        unsigned g() { return _g; }
-        unsigned b() { return _b; }
-        unsigned a() { return _a; }
-
-        unsigned int rgb2uint(); // elfy: я не понимаю суть этой функции, напиши плиз
-                                 // xela: for SDL purposes only
+        unsigned r() const { return _r; }
+        unsigned g() const { return _g; }
+        unsigned b() const { return _b; }
+        unsigned a() const { return _a; }
+	
+	/* Преобразование в целочисленный цвет для SDL */
+        operator unsigned() const;
 
         /* Идеальные цветовые константы */
         // elfy: я не знаю пока зачем это, просто рефакторю код, все вопросы к xela
