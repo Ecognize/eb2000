@@ -29,6 +29,7 @@ class Screen
         ~Screen();
 
         enum umode {_clean, _vscreen};
+
         /* Пользовательские функции */
         void setVideoMode(const VideoMode& mode);    // установить видеорежим
         const VideoMode getMaxVideoMode();           // получить максимально возможный видеорежим
@@ -44,27 +45,22 @@ class Screen
 
         // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс
         // xela: например? чем тебе эти не нравятся? константы как константы.
-        
-        //enum umode = {_clean, _vscreen};    // Используемый режим переноса виртуального буфера на экран:
-                                            // _clean - все виртуальные точки == физическим
-                                            // _vscreen - эмуляция 320x[200/240/256],
-                                            // каждая физическая точка увеличивается в [vratio = hx/_base] раз
-                                            // подробнее см. xela's features @ fraxos
 
     private:
         VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
         bool hmax;                          // Используется ли максимальное разрешение?
+        bool fullscreen;                    // Во весь экран или окно?
 
         /* "Игровые" или виртуальные данные, описание игрового экрана */
         unsigned int vw;                    // Виртуальный x 
         unsigned int vh;                    // Виртуальный y
         unsigned int vratio;                // Размер точки для виртуального экрана
-        
+
         static const int _base;             // для v-scaling, устанавливается в файле реализации
 
         /* Собсно сами точки */
         std::vector < vector <Color> > _surface; // Экранный буфер
-                                            
+
 
         SDL_Surface * _sdlsurface;          // SDL-буфер
 
