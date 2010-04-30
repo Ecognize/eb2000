@@ -1,0 +1,3 @@
+#include "AbstractMessage.h"
+
+class 
