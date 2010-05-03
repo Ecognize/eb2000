@@ -1,3 +1,6 @@
+#ifndef _EB2K_ABSTRACT_MESSAGE_
+#define _EB2K_ABSTRACT_MESSAGE_
+
 #include <iostream>
 
 class AbstractMessage
@@ -36,3 +39,5 @@ std::ostream& operator<<(std::ostream &str,const AbstractMessage& msg)
     msg.writeToStream(str);
     return str;
 }
+
+#endif
