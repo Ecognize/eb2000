@@ -15,6 +15,7 @@ class AbstractMessage
             _writeToStream(&str);
         }
         
+        /* Игровое время измеряется в миллисекундах */ 
         unsigned int issueTime() const { return _issueTime; }
         
     protected:
