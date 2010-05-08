@@ -16,6 +16,8 @@ class Color
 
         /* Идеальные цветовые константы */
         // elfy: я не знаю пока зачем это, просто рефакторю код, все вопросы к xela
+        // xela: стандартные константы, пусть будут пока.
+
         static const Color& Black;
         static const Color& White;
         static const Color& Red;
