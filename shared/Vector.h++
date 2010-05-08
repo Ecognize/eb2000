@@ -33,10 +33,11 @@ class Vector
         Vector operator-(const Vector&) const;  // Разница векторов
         Vector operator/(double) const;         // Скалярное умножение на число, обратное аргументу
         Vector operator*(double) const;         // Скалярное умножение на число
-        Vector operator*(const Vector&) const;  // Скалярное произведение векторов
+        // TODO : int or double?
+        int operator*(const Vector&) const;  	// Скалярное произведение векторов
         bool operator==(const Vector&) const;   // Равны ли вектора
         bool operator!=(const Vector&) const;   // Неравны ли вектора
-        void length() const;                    // Длина вектора
+        double length() const;                  // Длина вектора
         void normalize() const;                 // Нормализация вектора до единичной длины
         
         /* Методы в нижнем регистре возвращают экранные координаты */
