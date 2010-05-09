@@ -22,24 +22,28 @@ Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 /* Работа с видеорежимами */
 
 // Узнать (максимальный) используемый режим
-const VideoMode System::getMaxVideoMode() const
+const VideoMode Screen::getMaxVideoMode() const
 {
     const SDL_VideoInfo* s = SDL_GetVideoInfo();
     return VideoMode(s.current_w, s.current_h, s->vfmt.bitsPerPixel);
 }
 
 // Узнать текущий используемый режим
-const VideoMode& System::getVideoMode() const
+const VideoMode& Screen::getVideoMode() const
 {
     return currentMode;
 }
 
 // Установить видеорежим
-void setVideoMode(const VideoMode& mode)
+void Screen::setVideoMode(const VideoMode& mode)
 {
     // TODO: Сделать нормальные ошибки
+    Uint32 flags = SDL_HWSURFACE;
 
-    int bpp = SDL_VideoModeOK(mode.x(), mode.y(), mode.bpp(), SDL_FULLSCREEN);  // Определяем оптимальную глубину цвета
+    if(fullscreen)
+        flags |= SDL_FULLSCREEN;
+
+    int bpp = SDL_VideoModeOK(mode.x(), mode.y(), mode.bpp(), flags);  // Определяем оптимальную глубину цвета
 
     if (bpp == 0)   // Режим не доступен
     {
@@ -47,7 +51,7 @@ void setVideoMode(const VideoMode& mode)
         //exit(-1);
     }
 
-    _sdlsurface = SDL_SetVideoMode(mode.x(), mode.y(), bpp, SDL_FULLSCREEN);    // Установим режим
+    _sdlsurface = SDL_SetVideoMode(mode.x(), mode.y(), bpp, flags);    // Установим режим
 
     if(_sdlsurface == NULL)
         std::cerr<<"Can not set videomode.";
