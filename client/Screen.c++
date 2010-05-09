@@ -93,6 +93,55 @@ void Screen::setScaling(umode mode)
     /* ^^^^ Setting size of _surface to [vw] * [vh])*/
 }
 
+// Перенести виртуальный буфер на физический экран, главный bottle-neck
+void Screen::flipScreen()
+{
+    // Пока что забудем про umode и будем переписывать напрямую
+
+    Uint8 *p;                                     // указатель на физический адрес пикселя для SDL
+    Uint32 c;                                     // цвет для SDL
+    Color point;                                  // текущая точка виртуального экрана
+    int b = _sdlsurface->format->BytesPerPixel;   // байт на точку на физическом экране
+
+
+    for(int y = 0; y < currentMode.y(); y ++)
+        for(int x = 0; x < currentMode.x(); x ++)
+        {
+            point = _surface[x][y];                         // берём одну точку из нашего буфера
+            p = (Uint8 *)s->pixels + y * s->pitch + x * z;  // считаем, куда её поставить
+
+            /* определили цвет для SDL */
+            c = SDL_MapRGB(_sdlsurface->format, point.r(), point.g(), point.b());
+
+            /* ставим точку */
+            switch(b)
+            {
+                case 1:
+                *p = c;
+                break;
+
+                case 2:
+                *(Uint16 *)p = c;
+                break;
+
+                case 3:
+                if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+                    p[0] = (c >> 16) & 0xff;
+                    p[1] = (c >> 8)  & 0xff;
+                    p[2] = c         & 0xff;
+                } else {
+                    p[0] = c         & 0xff;
+                    p[1] = (c >> 8)  & 0xff;
+                    p[2] = (c >> 16) & 0xff;
+                }
+                break;
+
+                case 4:
+                *(Uint32 *)p = c;
+                break;
+            }
+        }
+}
 
 // Поставить точку
 void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) 
