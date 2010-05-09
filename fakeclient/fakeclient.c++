@@ -3,6 +3,10 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 
+// uncomment to compile
+// #include "AbstractScene.h"
+// #include "Actor.h"
+
 class Graph
 {
     public:
@@ -172,6 +176,31 @@ vscreen[xf][yf].r, vscreen[xf][yf].g, vscreen[xf][yf].b ));
         kbhit(); 
         SDL_Quit(); 
         */
+        
+        /* Main loop logic */
+        /*
+        
+        SomeSceneClass scene;
+        while (not need to quit)
+        {
+            scene.recieveMessages();
+            drawWalls() -- пока забей
+            for (AbstractScene::iterator i=scene.begin();i!=scene.end();end())
+            {
+                Actor &act=(*i);
+                int x=act.position().x()*SCREEN_WIDTH;
+                int y=act.position().y()*SCREEN_HEIGHT; // TODO
+                int halfwidth=act.class().width()/2;
+                int halfwidth=act.class().height()/2;
+                Color col=colors[act.class().id()];
+                drawRectangle(x-halfwidth,y-halfheight,x+halfwidth,y+halfheight,col);
+            }
+        }
+        
+        
+        */
+        
+        
         for(int i = 0; i < 128; i++)
             scr.line(rand() % 800, rand() % 600, rand() % 800, rand() % 600, scr.RGB(0,i,0));
 
