@@ -39,7 +39,7 @@ class Vector
         bool operator==(const Vector&) const;   // Равны ли вектора
         bool operator!=(const Vector&) const;   // Неравны ли вектора
         double length() const;                  // Длина вектора
-        void normalize() const;                 // Нормализация вектора до единичной длины
+        void normalize();                       // Нормализация вектора до единичной длины
        
         
         /* Логические координаты */
