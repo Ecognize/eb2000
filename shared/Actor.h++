@@ -3,6 +3,7 @@
 
 #include "Vector.h++"
 #include "Point.h++"
+#include "ActorClass.h++"
 
 class Actor
 {
@@ -20,7 +21,8 @@ class Actor
         /* Мгновенное перемещение */
         void translocate(unsigned int newtime,const Vector& point);
         
-        /* TODO: селектор класса для определения размеров и графики */
+        /* Селектор класса для определения размеров и графики */
+        const ActorClass& classDef() const { return _classdef; }
         
     private:
         /* Геометрия — вектор скорости и положение */
@@ -28,6 +30,9 @@ class Actor
         Vector _pos;
         /* Внутренний номер объекта, присваивается менеджером */
         unsigned int _handle;
+        
+        /* Ссылка на класс */
+        const ActorClass& _classdef;
         
         /* Время последнего просчета координат в игровых миллисекундах */
         unsigned int _lastUpdate;
