@@ -35,15 +35,15 @@ Vector& operator-=(const Vector& p)
 
 Vector& operator*=(double p);
 {
-	X()*=p;
-	Y()*=p;
+	x()()*=p;
+	y()()*=p;
 	return this;
 }      
 
 Vector& operator/=(double p); 
 {
-	X()/=p;
-	Y()/=p;
+	x()()/=p;
+	y()()/=p;
 	return this;
 }          
  
@@ -79,7 +79,7 @@ void Vector::normalize()
 
 double length() const
 {
-	return sqrt(X()*X()+Y()*Y());
+	return sqrt(x()()*x()()+y()()*y()());
 }
 
 bool operator==(const Vector& p) const { return (_data[0]==p._data[0])&&(_data[1]==p._data[1]); }
@@ -88,5 +88,5 @@ bool operator!=(const Vector& p) const { return !((*this)==p); }
 /* Доступ к координатам */
 int Vector::x() const { return _data[0]*System::playableWidth(); }
 int Vector::y() const { return _data[1]*System::playableHeight(); }
-double Vector::X() const { return _data[0]; }
-double Vector::Y() const { return _data[1]; }
+double Vector::x()() const { return _data[0]; }
+double Vector::y()() const { return _data[1]; }
