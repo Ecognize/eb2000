@@ -1,73 +1,78 @@
 #include "Vector.h++"
-#include "System.h++"
 #include <cmath>
 
 // TODO: Комментирование
 
 /* Конструирование a.k.a. «легкотня» */
-Vector::Vector() : _data() // WARNING: заглушка, нужно ровно два элемента, забыл как пишется
+Vector::Vector() : _data(2) // WARNING: заглушка, нужно ровно два элемента, забыл как пишется
 { }
 
 Vector::Vector(const Vector& p) : _data(p._data)
 { }
 
-/* Математика */
-
-Vector& operator=(const Vector& p)
+Vector::Vector(double x,double y) : _data(2)
 {
-	_data=p._data;// TODO
-	return _data;
+    _data[0]=x; // TODO initialize by list maybe?
+    _data[1]=y;
 }
 
-Vector& operator+=(const Vector& p);
+/* Математика */
+
+Vector& Vector::operator=(const Vector& p)
+{
+	_data=p._data;// TODO
+	return (*this);
+}
+
+Vector& Vector::operator+=(const Vector& p)
 {
 	x()+=p.x();
 	y()+=p.y();
-	return this;
+	return (*this);
 }
 
-Vector& operator-=(const Vector& p)
+Vector& Vector::operator-=(const Vector& p)
 {
 	x()-=p.x();
 	y()-=p.y();
-	return this;
+	return (*this);
 }    
 
-Vector& operator*=(double p);
+Vector& Vector::operator*=(double p)
 {
-	X()*=p;
-	Y()*=p;
-	return this;
+	x()*=p;
+	y()*=p;
+	return (*this);
 }      
 
-Vector& operator/=(double p); 
+Vector& Vector::operator/=(double p)
 {
-	X()/=p;
-	Y()/=p;
-	return this;
+	x()/=p;
+	y()/=p;
+	return (*this);
 }          
  
-Vector operator+(const Vector& p) const
+Vector Vector::operator+(const Vector& p) const
 {
   	return Vector(x()+p.x(),y()+p.y());
 }
   
-Vector operator-(const Vector& p) const
+Vector Vector::operator-(const Vector& p) const
 {
   	return Vector(x()-p.x(),y()-p.y());
 }
 
-Vector operator*(double p) const
+Vector Vector::operator*(double p) const
 {
 	return Vector(x()*p,y()*p);	
 }
 
-Vector operator/(double p) const
+Vector Vector::operator/(double p) const
 {
 	return ((*this)*(1.0/p));
 }
 
-int operator*(const Vector& p) const
+int Vector::operator*(const Vector& p) const
 {
 	return x()*p.x()+y()*p.y();
 }
@@ -77,16 +82,24 @@ void Vector::normalize()
     (*this)/=length();
 }
 
-double length() const
+double Vector::length() const
 {
-	return sqrt(X()*X()+Y()*Y());
+	return sqrt(x()*x()+y()*y());
 }
 
-bool operator==(const Vector& p) const { return (_data[0]==p._data[0])&&(_data[1]==p._data[1]); }
-bool operator!=(const Vector& p) const { return !((*this)==p); }
+bool Vector::operator==(const Vector& p) const { return (_data[0]==p._data[0])&&(_data[1]==p._data[1]); }
+bool Vector::operator!=(const Vector& p) const { return !((*this)==p); }
 
 /* Доступ к координатам */
-int Vector::x() const { return _data[0]*System::playableWidth(); }
-int Vector::y() const { return _data[1]*System::playableHeight(); }
-double Vector::X() const { return _data[0]; }
-double Vector::Y() const { return _data[1]; }
+double Vector::x() const { return _data[0]; }
+double Vector::y() const { return _data[1]; }
+// WARNING: временное решение
+double& Vector::x() { return _data[0]; }
+double& Vector::y() { return _data[1]; }
+
+/* Вывод в stdout */
+std::ostream& operator<<(std::ostream& str, const Vector& vec)
+{
+    str<<"("<<vec.x()<<";"<<vec.y()<<")";
+}
+

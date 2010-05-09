@@ -3,6 +3,7 @@
 #define _EB2K_VECTOR_HPP
 
 #include <vector>
+#include <iostream>
 
 /* Координатная система представлена двумя способами или «представлениями»:
     «экранное») стандартная декартовая система координат, нуль находится в левом нижнем углу,
@@ -22,7 +23,7 @@ class Vector
         /* TODO: Математика & комментарии. Кто сделает — получит печеньку! */
         Vector();
         Vector(const Vector&);
-        Vector(int x,int y);
+//         Vector(int x,int y);
         Vector(double x,double y);              // WARNING: перобразования типов же!
         Vector& operator=(const Vector&);       // Присваивание векторов
         Vector& operator+=(const Vector&);      // Присваивание суммы векторов
@@ -38,23 +39,21 @@ class Vector
         bool operator==(const Vector&) const;   // Равны ли вектора
         bool operator!=(const Vector&) const;   // Неравны ли вектора
         double length() const;                  // Длина вектора
-        void normalize() const;                 // Нормализация вектора до единичной длины
+        void normalize();                       // Нормализация вектора до единичной длины
+       
         
-        /* Методы в нижнем регистре возвращают экранные координаты */
-        int x() const;
-        int& x();
-        int y() const;
-        int &y();
-        
-        /* Методы в верхнем регистре возвращают логические координаты */
-        double X() const;
-        double& X();
-        double Y() const;
-        double& Y();
+        /* Логические координаты */
+        double x() const;
+        double& x();
+        double y() const;
+        double& y();
         
     private:
         /* Внутреннее представление данных, логическая система */
         std::vector<double> _data;
 };
+
+/* Оператор вывода */
+std::ostream& operator<<(std::ostream& str, const Vector& vec);
 
 #endif
