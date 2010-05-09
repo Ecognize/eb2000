@@ -8,7 +8,7 @@ const int Screen::_base = 320;
 /* Конструктор и деструктор */
 Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 {
-
+    fullscreen = false;
 }
 
 ~Screen::Screen()
@@ -85,12 +85,11 @@ void Screen::setScaling(umode mode)
 
     for (int i = 0; i < vh; i++ )
     {
-        _surface.push_back( vector <Color>() );
-	
-	for(int j = 0; j < vw; j++ )
-	    _surface[i].push_back(_color_black);
+        _surface.push_back( std::vector <Color>() );
+
+        for(int j = 0; j < vw; j++ )
+            _surface[i].push_back(Color::Black);
     }
-    
     /* ^^^^ Setting size of _surface to [vw] * [vh])*/
 }
 

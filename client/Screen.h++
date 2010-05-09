@@ -11,7 +11,7 @@ class VideoMode
 {
     public:
         VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) {  }
-                                                                    
+
         unsigned w() const { return _x; }
         unsigned h() const { return _y; }
         unsigned bpp() const { return _bpp; }
@@ -60,7 +60,7 @@ class Screen
         static const int _base;             // для v-scaling, устанавливается в файле реализации
 
         /* Собсно сами точки */
-        std::vector < vector <Color> > _surface; // Экранный буфер
+        std::vector < std::vector <Color> > _surface; // Экранный буфер
 
 
         SDL_Surface * _sdlsurface;          // SDL-буфер
