@@ -11,7 +11,7 @@ class VideoMode
 {
     public:
         VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) {  }
-                                                                    
+
         unsigned w() const { return _x; }
         unsigned h() const { return _y; }
         unsigned bpp() const { return _bpp; }
@@ -31,9 +31,12 @@ class Screen
         enum umode {_clean, _vscreen};
 
         /* Пользовательские функции */
-        void setVideoMode(const VideoMode& mode);    // установить видеорежим
-        const VideoMode getMaxVideoMode();           // получить максимально возможный видеорежим
-        void setScaling(umode mode);                 // установить параметры переноса буфера
+        void  setVideoMode(const VideoMode& mode);    // установить видеорежим
+        const VideoMode getMaxVideoMode() const;      // получить максимально возможный видеорежим
+        const VideoMode& getVideoMode() const;        // получить текущий видеорежим
+        void  setScaling(umode mode);                 // установить параметры переноса буфера
+        void  flipScreen();                           // перенести виртуальный буфер на экран
+
 
         /* Графика */
         void putPixel(unsigned int x, unsigned int y, const Color& color);                                  // Поставить точку
@@ -42,9 +45,6 @@ class Screen
         void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Линия
         void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Рамка
         void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);   // Закрашенный квадрат
-
-        // elfy: в прайвате его нельзя будет юзать. альзо, назови константы полицеприятнее шоле, раз даешь интерфейс
-        // xela: например? чем тебе эти не нравятся? константы как константы.
 
     private:
         VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
@@ -59,7 +59,7 @@ class Screen
         static const int _base;             // для v-scaling, устанавливается в файле реализации
 
         /* Собсно сами точки */
-        std::vector < vector <Color> > _surface; // Экранный буфер
+        std::vector < std::vector <Color> > _surface; // Экранный буфер
 
 
         SDL_Surface * _sdlsurface;          // SDL-буфер

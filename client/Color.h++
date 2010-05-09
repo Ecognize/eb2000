@@ -10,13 +10,8 @@ class Color
         unsigned g() const { return _g; }
         unsigned b() const { return _b; }
         unsigned a() const { return _a; }
-	
-	/* Преобразование в целочисленный цвет для SDL */
-        operator unsigned() const;
 
         /* Идеальные цветовые константы */
-        // elfy: я не знаю пока зачем это, просто рефакторю код, все вопросы к xela
-        // xela: стандартные константы, пусть будут пока.
 
         static const Color& Black;
         static const Color& White;
@@ -24,8 +19,8 @@ class Color
         static const Color& Green;
         static const Color& Blue;
         // elfy: g++ может тут и без ссылок, но пусть пока будет так, безопаснее по-моему.
-        
-	// elfy: тут нужно написать хотя бы парочку операторов для цветов, смешивание, AND/OR итд, мне кажется
+
+        // elfy: тут нужно написать хотя бы парочку операторов для цветов, смешивание, AND/OR итд, мне кажется
     private:
         unsigned short _r;
         unsigned short _g;
