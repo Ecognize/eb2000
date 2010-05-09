@@ -3,6 +3,7 @@
 #define _EB2K_VECTOR_HPP
 
 #include <vector>
+#include <iostream>
 
 /* Координатная система представлена двумя способами или «представлениями»:
     «экранное») стандартная декартовая система координат, нуль находится в левом нижнем углу,
@@ -51,5 +52,8 @@ class Vector
         /* Внутреннее представление данных, логическая система */
         std::vector<double> _data;
 };
+
+/* Оператор вывода */
+std::ostream& operator<<(std::ostream& str, const Vector& vec);
 
 #endif

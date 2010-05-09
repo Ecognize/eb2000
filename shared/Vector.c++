@@ -90,3 +90,10 @@ int Vector::x() const { return _data[0]*System::playableWidth(); }
 int Vector::y() const { return _data[1]*System::playableHeight(); }
 double Vector::x()() const { return _data[0]; }
 double Vector::y()() const { return _data[1]; }
+
+/* Вывод в stdout */
+std::ostream& operator<<(std::ostream& str, const Vector& vec)
+{
+    str<<"("<<vec.x()<<";"<<vec.y()<<")";
+}
+
