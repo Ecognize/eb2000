@@ -8,7 +8,7 @@ const int Screen::_base = 320;
 /* Конструктор и деструктор */
 Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 {
-
+    fullscreen = false;
 }
 
 ~Screen::Screen()
@@ -22,18 +22,28 @@ Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 /* Работа с видеорежимами */
 
 // Узнать (максимальный) используемый режим
-const VideoMode System::getMaxVideoMode()
+const VideoMode Screen::getMaxVideoMode() const
 {
     const SDL_VideoInfo* s = SDL_GetVideoInfo();
     return VideoMode(s.current_w, s.current_h, s->vfmt.bitsPerPixel);
 }
 
+// Узнать текущий используемый режим
+const VideoMode& Screen::getVideoMode() const
+{
+    return currentMode;
+}
+
 // Установить видеорежим
-void setVideoMode(const VideoMode& mode)
+void Screen::setVideoMode(const VideoMode& mode)
 {
     // TODO: Сделать нормальные ошибки
+    Uint32 flags = SDL_HWSURFACE;
 
-    int bpp = SDL_VideoModeOK(mode.x(), mode.y(), mode.bpp(), SDL_FULLSCREEN);  // Определяем оптимальную глубину цвета
+    if(fullscreen)
+        flags |= SDL_FULLSCREEN;
+
+    int bpp = SDL_VideoModeOK(mode.x(), mode.y(), mode.bpp(), flags);  // Определяем оптимальную глубину цвета
 
     if (bpp == 0)   // Режим не доступен
     {
@@ -41,7 +51,7 @@ void setVideoMode(const VideoMode& mode)
         //exit(-1);
     }
 
-    _sdlsurface = SDL_SetVideoMode(mode.x(), mode.y(), bpp, SDL_FULLSCREEN);    // Установим режим
+    _sdlsurface = SDL_SetVideoMode(mode.x(), mode.y(), bpp, flags);    // Установим режим
 
     if(_sdlsurface == NULL)
         std::cerr<<"Can not set videomode.";
@@ -75,15 +85,63 @@ void Screen::setScaling(umode mode)
 
     for (int i = 0; i < vh; i++ )
     {
-        _surface.push_back( vector <Color>() );
-	
-	for(int j = 0; j < vw; j++ )
-	    _surface[i].push_back(_color_black);
+        _surface.push_back( std::vector <Color>() );
+
+        for(int j = 0; j < vw; j++ )
+            _surface[i].push_back(Color::Black);
     }
-    
     /* ^^^^ Setting size of _surface to [vw] * [vh])*/
 }
 
+// Перенести виртуальный буфер на физический экран, главный bottle-neck
+void Screen::flipScreen()
+{
+    // Пока что забудем про umode и будем переписывать напрямую
+
+    Uint8 *p;                                     // указатель на физический адрес пикселя для SDL
+    Uint32 c;                                     // цвет для SDL
+    Color point;                                  // текущая точка виртуального экрана
+    int b = _sdlsurface->format->BytesPerPixel;   // байт на точку на физическом экране
+
+
+    for(int y = 0; y < currentMode.y(); y ++)
+        for(int x = 0; x < currentMode.x(); x ++)
+        {
+            point = _surface[x][y];                         // берём одну точку из нашего буфера
+            p = (Uint8 *)s->pixels + y * s->pitch + x * z;  // считаем, куда её поставить
+
+            /* определили цвет для SDL */
+            c = SDL_MapRGB(_sdlsurface->format, point.r(), point.g(), point.b());
+
+            /* ставим точку */
+            switch(b)
+            {
+                case 1:
+                *p = c;
+                break;
+
+                case 2:
+                *(Uint16 *)p = c;
+                break;
+
+                case 3:
+                if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+                    p[0] = (c >> 16) & 0xff;
+                    p[1] = (c >> 8)  & 0xff;
+                    p[2] = c         & 0xff;
+                } else {
+                    p[0] = c         & 0xff;
+                    p[1] = (c >> 8)  & 0xff;
+                    p[2] = (c >> 16) & 0xff;
+                }
+                break;
+
+                case 4:
+                *(Uint32 *)p = c;
+                break;
+            }
+        }
+}
 
 // Поставить точку
 void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) 
