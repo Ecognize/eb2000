@@ -32,7 +32,8 @@ class Screen
 
         /* Пользовательские функции */
         void setVideoMode(const VideoMode& mode);    // установить видеорежим
-        const VideoMode getMaxVideoMode();           // получить максимально возможный видеорежим
+        const VideoMode getMaxVideoMode() const;     // получить максимально возможный видеорежим
+        const VideoMode& getVideoMode() const;       // получить текущий видеорежим
         void setScaling(umode mode);                 // установить параметры переноса буфера
 
         /* Графика */

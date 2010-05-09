@@ -22,10 +22,16 @@ Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 /* Работа с видеорежимами */
 
 // Узнать (максимальный) используемый режим
-const VideoMode System::getMaxVideoMode()
+const VideoMode System::getMaxVideoMode() const
 {
     const SDL_VideoInfo* s = SDL_GetVideoInfo();
     return VideoMode(s.current_w, s.current_h, s->vfmt.bitsPerPixel);
+}
+
+// Узнать текущий используемый режим
+const VideoMode& System::getVideoMode() const
+{
+    return currentMode;
 }
 
 // Установить видеорежим
