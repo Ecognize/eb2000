@@ -10,6 +10,12 @@ class Color
         unsigned g() const { return _g; }
         unsigned b() const { return _b; }
         unsigned a() const { return _a; }
+        
+        /* TODO: bound checks */
+        unsigned& r() { return _r; }
+        unsigned& g() { return _g; }
+        unsigned& b() { return _b; }
+        unsigned& a() { return _a; }
 
         /* Идеальные цветовые константы */
 
