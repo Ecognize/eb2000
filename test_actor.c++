@@ -5,7 +5,7 @@ using namespace std;
 int main()
 {
     ClassLibrary::instance().push_back(ActorClass(0,0.1,0.1));
-    Actor act(0,0,Vector(0.5,0.5));
+    Actor act(0,ClassLibrary::instance().classById(0),0,Vector(0.5,0.5));
     Vector velocity(0.01,0.01);
     
     cout << "Original position:" << act.position() << endl;
