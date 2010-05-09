@@ -1,15 +1,16 @@
-#include "Actor.c++"
+#include "Actor.h++"
 #include <cassert>
 
 /* Конструкция */
-Actor::Actor(Scene& parent,int classid, const Vector& pos,const Vector &vel) 
-    : _parent(parent),_pos(pos),_vel(vel),
-      _classdef(ClassLibrary::instance().classById(classid)),_handle(parent.requestHandle(this))
+Actor::Actor(unsigned int id,const ActorClass& classid, 
+             unsigned int birthtime, const Vector& pos,const Vector &vel) :
+                _pos(pos),_vel(vel),_lastUpdate(birthtime),
+                _classdef(classid),_handle(id)
 {}
 
-Actor::Actor(const Actor& p)
-    : _parent(p._parent),_pos(p._pos),_vel(p._vel),
-      _classdef(p._classdef),_handle(p._parent.requestHandle(this))
+Actor::Actor(const Actor& p,unsigned int id, unsigned int birthtime)
+    : _pos(p._pos),_vel(p._vel), _lastUpdate(birthtime),
+      _classdef(p._classdef),_handle(id)
 {}
 
 

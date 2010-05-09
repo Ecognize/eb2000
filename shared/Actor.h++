@@ -2,17 +2,15 @@
 #define _EB2K_ACTOR_HPP_
 
 #include "Vector.h++"
-#include "Point.h++"
 #include "ActorClass.h++"
-
-class Scene;
 
 class Actor
 {
     public:
         /* Конструкция */
-        Actor(Scene& parent,int classid, const Vector& pos=Vector(),const Vector &vel=Vector);
-        Actor(const Actor& p);
+        Actor(unsigned int id,const ActorClass& classid, unsigned int birthtime, 
+              const Vector& pos=Vector(),const Vector &vel=Vector());
+        Actor(const Actor& p,unsigned int id, unsigned int birthtime);
         
         /* Селекторы */
         unsigned int lastUpdate() const { return _lastUpdate; }
@@ -37,14 +35,13 @@ class Actor
         /* Внутренний номер объекта, присваивается менеджером */
         const unsigned int _handle;
         
-        /* Отсылка на родительскую сцену */
-        Scene& _parent;
-        
         /* Ссылка на класс */
         const ActorClass& _classdef;
         
         /* Время последнего просчета координат в игровых миллисекундах */
         unsigned int _lastUpdate;
+        
+        /* TODO copy constructor ban */
 };
 
 #endif

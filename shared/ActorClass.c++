@@ -1,8 +1,8 @@
 #include "ActorClass.h++"
 
-static ActorClass& ActorClass::instance()
+ClassLibrary& ClassLibrary::instance()
 {
-    static ActorClass cl;
+    static ClassLibrary cl;
     return cl;
 }
 
