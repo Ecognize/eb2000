@@ -7,6 +7,8 @@
 class ActorClass
 {
     public:
+        /* Конструкция */
+        ActorClass(int i,double w, double h) : _id(i), _w(w), _h(h) {}
         /* Внутренний номер класса */
         int id() const { return _id; }
         /* Линейные размеры */
@@ -19,14 +21,14 @@ class ActorClass
         double _h;
 };
 
-class ClassLibrary : public std::list<const ActorClass&>
+class ClassLibrary : public std::list<ActorClass>
 {
     public:
-        static ActorClass& instance();
+        static ClassLibrary& instance();
         
-        const ActorClass& getClassById(int) const;
+        const ActorClass& classById(int) const { return back();/* STUB!! */ }
     private:
-        ClassLibrary();
+        ClassLibrary() {} 
 };
 
 #endif
