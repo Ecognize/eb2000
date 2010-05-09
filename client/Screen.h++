@@ -10,16 +10,25 @@
 class VideoMode
 {
     public:
-        VideoMode(int w,int h,int bpp=24) : _x(w),_y(h),_bpp(bpp) {  }
+        VideoMode(int w,int h,int bpp=24,bool f=false) : _x(w),_y(h),_bpp(bpp),_fullscreen(f) {  }
 
-        unsigned w() const { return _x; }
-        unsigned h() const { return _y; }
-        unsigned bpp() const { return _bpp; }
+        unsigned w()          const { return _x; }
+        unsigned h()          const { return _y; }
+        unsigned bpp()        const { return _bpp; }
+        bool     fullscreen() const { return _fullscreen; }
+
+        unsigned &w()           { return _x; }
+        unsigned &h()           { return _y; }
+        unsigned &bpp()         { return _bpp; }
+        bool     &fullscreen()  { return _fullscreen; }
+
+
     private:
-    /* Физические данные, описание видеорежима */
-    unsigned int _x;                    // Аппаратный используемый x
-    unsigned int _y;                    // Аппаратный используемый y
-    unsigned int _bpp;                  // Сколько бит на пиксел
+        /* Физические данные, описание видеорежима */
+        unsigned int _x;                    // Аппаратный используемый x
+        unsigned int _y;                    // Аппаратный используемый y
+        unsigned int _bpp;                  // Сколько бит на пиксел
+        bool _fullscreen;                   // Во весь экран или окно?
 };
 
 class Screen
@@ -28,13 +37,13 @@ class Screen
         Screen();
         ~Screen();
 
-        enum umode {_clean, _vscreen};
+        //typedef enum umode {_clean, _vscreen};
 
         /* Пользовательские функции */
         void  setVideoMode(const VideoMode& mode);    // установить видеорежим
-        const VideoMode getMaxVideoMode() const;      // получить максимально возможный видеорежим
+        //const VideoMode getMaxVideoMode() const;      // получить максимально возможный видеорежим
         const VideoMode& getVideoMode() const;        // получить текущий видеорежим
-        void  setScaling(umode mode);                 // установить параметры переноса буфера
+        void  setScaling(/*umode mode*/);                 // установить параметры переноса буфера
         void  flipScreen();                           // перенести виртуальный буфер на экран
 
 
@@ -49,7 +58,7 @@ class Screen
     private:
         VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
         bool hmax;                          // Используется ли максимальное разрешение?
-        bool fullscreen;                    // Во весь экран или окно?
+        //umode tmode;
 
         /* "Игровые" или виртуальные данные, описание игрового экрана */
         unsigned int vw;                    // Виртуальный x 
@@ -63,6 +72,7 @@ class Screen
 
 
         SDL_Surface * _sdlsurface;          // SDL-буфер
+        void _putpixel(int,int,Uint32);     // поставить физическую точку
 
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)

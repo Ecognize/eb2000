@@ -5,17 +5,18 @@ class Color
 {
     public:
         Color(int r, int g, int b, int a = 0) : _r(r), _g(g), _b(b), _a(a) {  }
+        Color() { }
 
-        unsigned r() const { return _r; }
-        unsigned g() const { return _g; }
-        unsigned b() const { return _b; }
-        unsigned a() const { return _a; }
-        
+        unsigned short r() const { return _r; }
+        unsigned short g() const { return _g; }
+        unsigned short b() const { return _b; }
+        unsigned short a() const { return _a; }
+
         /* TODO: bound checks */
-        unsigned& r() { return _r; }
-        unsigned& g() { return _g; }
-        unsigned& b() { return _b; }
-        unsigned& a() { return _a; }
+        unsigned short& r() { return _r; }
+        unsigned short& g() { return _g; }
+        unsigned short& b() { return _b; }
+        unsigned short& a() { return _a; }
 
         /* Идеальные цветовые константы */
 
