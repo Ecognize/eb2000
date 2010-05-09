@@ -1,6 +1,18 @@
 #include "Actor.c++"
 #include <cassert>
 
+/* Конструкция */
+Actor::Actor(Scene& parent,int classid, const Vector& pos,const Vector &vel) 
+    : _parent(parent),_pos(pos),_vel(vel),
+      _classdef(ClassLibrary::instance().classById(classid)),_handle(parent.requestHandle(this))
+{}
+
+Actor::Actor(const Actor& p)
+    : _parent(p._parent),_pos(p._pos),_vel(p._vel),
+      _classdef(p._classdef),_handle(p._parent.requestHandle(this))
+{}
+
+
 void Actor::updatePosition(unsigned int newtime)
 {
     /* Высчитываем разницу во времени */

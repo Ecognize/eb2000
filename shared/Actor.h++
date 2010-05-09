@@ -5,9 +5,15 @@
 #include "Point.h++"
 #include "ActorClass.h++"
 
+class Scene;
+
 class Actor
 {
     public:
+        /* Конструкция */
+        Actor(Scene& parent,int classid, const Vector& pos=Vector(),const Vector &vel=Vector);
+        Actor(const Actor& p);
+        
         /* Селекторы */
         unsigned int lastUpdate() const { return _lastUpdate; }
         const Vector& position() const { return _pos; }
@@ -29,7 +35,10 @@ class Actor
         Vector _vel; // NB: игровых едениц в игровую миллисекунду
         Vector _pos;
         /* Внутренний номер объекта, присваивается менеджером */
-        unsigned int _handle;
+        const unsigned int _handle;
+        
+        /* Отсылка на родительскую сцену */
+        Scene& _parent;
         
         /* Ссылка на класс */
         const ActorClass& _classdef;
