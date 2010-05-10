@@ -3,15 +3,16 @@
 
 #include "Screen.h++"
 
+
 const int Screen::_base = 320;
 
 /* Конструктор и деструктор */
-Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
+Screen::Screen() : currentMode(800,600,16,false)//,tmode(_vscreen)
 {
-    fullscreen = false;
+    
 }
 
-~Screen::Screen()
+Screen::~Screen()
 {
     SDL_FreeSurface(_sdlsurface);
     _sdlsurface = NULL;
@@ -20,13 +21,13 @@ Screen::Screen() : currentMode(800,600,16),umode(_vscreen)
 
 
 /* Работа с видеорежимами */
-
+/*
 // Узнать (максимальный) используемый режим
 const VideoMode Screen::getMaxVideoMode() const
 {
     const SDL_VideoInfo* s = SDL_GetVideoInfo();
-    return VideoMode(s.current_w, s.current_h, s->vfmt.bitsPerPixel);
-}
+    return VideoMode(s->current_w, s->current_h, s->vfmt.bitsPerPixel);
+}*/
 
 // Узнать текущий используемый режим
 const VideoMode& Screen::getVideoMode() const
@@ -37,51 +38,53 @@ const VideoMode& Screen::getVideoMode() const
 // Установить видеорежим
 void Screen::setVideoMode(const VideoMode& mode)
 {
-    // TODO: Сделать нормальные ошибки
+    // TODO: Сделать нормальные ошибки (через исключения)
     Uint32 flags = SDL_HWSURFACE;
 
-    if(fullscreen)
+    if(mode.fullscreen())
         flags |= SDL_FULLSCREEN;
 
-    int bpp = SDL_VideoModeOK(mode.x(), mode.y(), mode.bpp(), flags);  // Определяем оптимальную глубину цвета
+    int bpp = SDL_VideoModeOK(mode.w(), mode.h(), mode.bpp(), flags);  // Определяем оптимальную глубину цвета
 
     if (bpp == 0)   // Режим не доступен
     {
-        std::cerr<<"Mode is not available.";
+        throw "Mode is not available.";
         //exit(-1);
     }
 
-    _sdlsurface = SDL_SetVideoMode(mode.x(), mode.y(), bpp, flags);    // Установим режим
+    _sdlsurface = SDL_SetVideoMode(mode.w(), mode.h(), bpp, flags);    // Установим режим
 
     if(_sdlsurface == NULL)
-        std::cerr<<"Can not set videomode.";
+        throw "Can not set videomode.";
 
     // Заполним инфо о режиме
-    currentMode(mode.x(), mode.y(), bpp);
+    currentMode.w() = mode.w();
+    currentMode.h() = mode.h();
+    currentMode.bpp() = bpp;
 }
 
 // Установить сглаживание
-void Screen::setScaling(umode mode)
+void Screen::setScaling(/*umode mode*/)
 {
-    switch(mode)
+    /*switch(mode)
     {
-        case _clean:
-        vw = currentMode.x();
-        vh = currentMode.y();
-        umode = _clean;
-        break;
+        case _clean:*/
+        vw = currentMode.w();
+        vh = currentMode.h();
+        //tmode = _clean;
+        /*break;
 
         case _vscreen:
-        vratio = currentMode.x() / _base;
+        vratio = currentMode.w() / _base;
         vw = _base;
-        vh = currentMode.y() / vratio;
-        umode = _vscreen;
+        vh = currentMode.h() / vratio;
+        tmode = _vscreen;
         break;
 
         default:
         setScaling(_clean);
         break;
-    }
+    }*/
 
     for (int i = 0; i < vh; i++ )
     {
@@ -93,54 +96,69 @@ void Screen::setScaling(umode mode)
     /* ^^^^ Setting size of _surface to [vw] * [vh])*/
 }
 
+void Screen::_putpixel(int x, int y, Uint32 pixel) 
+{ 
+    int bpp = _sdlsurface->format->BytesPerPixel;
+    Uint8 *p = (Uint8 *)_sdlsurface->pixels + y * _sdlsurface->pitch + x * bpp;
+
+    switch(bpp)
+    {
+        case 1:
+        *p = pixel;
+        break;
+
+        case 2:
+        *(Uint16 *)p = pixel;
+        break;
+
+        case 3:
+            if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+                p[0] = (pixel >> 16) & 0xff;
+                p[1] = (pixel >> 8) & 0xff;
+                p[2] = pixel & 0xff;
+            } else {
+                p[0] = pixel & 0xff;
+                p[1] = (pixel >> 8) & 0xff;
+                p[2] = (pixel >> 16) & 0xff;
+            }
+        break;
+
+        case 4:
+        *(Uint32 *)p = pixel;
+        break;
+    }
+}
+
 // Перенести виртуальный буфер на физический экран, главный bottle-neck
 void Screen::flipScreen()
 {
     // Пока что забудем про umode и будем переписывать напрямую
 
-    Uint8 *p;                                     // указатель на физический адрес пикселя для SDL
-    Uint32 c;                                     // цвет для SDL
-    Color point;                                  // текущая точка виртуального экрана
-    int b = _sdlsurface->format->BytesPerPixel;   // байт на точку на физическом экране
+    Uint32 c;                                       // цвет для SDL
+    Color point;                                    // текущая точка виртуального экрана
 
+    // заблокируем экран ( я без этого делал, но тут пусть будет)
+    if ( SDL_MUSTLOCK(_sdlsurface) ) 
+    {
+        if ( SDL_LockSurface(_sdlsurface) < 0 ) 
+            throw "Can't lock screen"; // %s\n", SDL_GetError()); 
+    }
 
-    for(int y = 0; y < currentMode.y(); y ++)
-        for(int x = 0; x < currentMode.x(); x ++)
+    for(int y = 0; y < currentMode.w(); y ++)
+        for(int x = 0; x < currentMode.h(); x ++)
         {
             point = _surface[x][y];                         // берём одну точку из нашего буфера
-            p = (Uint8 *)s->pixels + y * s->pitch + x * z;  // считаем, куда её поставить
 
-            /* определили цвет для SDL */
-            c = SDL_MapRGB(_sdlsurface->format, point.r(), point.g(), point.b());
+            /* определим цвет для SDL */
+            c = SDL_MapRGB(_sdlsurface->format, 230,9,9);//point.r(), point.g(), point.b());
 
             /* ставим точку */
-            switch(b)
-            {
-                case 1:
-                *p = c;
-                break;
-
-                case 2:
-                *(Uint16 *)p = c;
-                break;
-
-                case 3:
-                if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-                    p[0] = (c >> 16) & 0xff;
-                    p[1] = (c >> 8)  & 0xff;
-                    p[2] = c         & 0xff;
-                } else {
-                    p[0] = c         & 0xff;
-                    p[1] = (c >> 8)  & 0xff;
-                    p[2] = (c >> 16) & 0xff;
-                }
-                break;
-
-                case 4:
-                *(Uint32 *)p = c;
-                break;
-            }
+            _putpixel(x, y, c);
         }
+    // разблокируем обратно
+    if ( SDL_MUSTLOCK(_sdlsurface) ) 
+        SDL_UnlockSurface(_sdlsurface); 
+
 }
 
 // Поставить точку
@@ -181,7 +199,7 @@ void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned in
             if (fraction >= 0)
             {
                 y0 += stepy;
-                fraction -= dx;                         
+                fraction -= dx;
             }
             x0 += stepx;
             fraction += dy;
