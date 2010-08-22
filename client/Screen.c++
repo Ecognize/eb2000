@@ -51,8 +51,8 @@ void Screen::setVideoMode(const VideoMode& mode)
         throw "Mode is not available.";
         //exit(-1);
     }
-
-    _sdlsurface = SDL_SetVideoMode(mode.w(), mode.h(), bpp, flags);    // Установим режим
+    std::cout<<"Mode verified: "<<mode.w()<<"x"<<mode.h()<<"x"<<bpp<<std::endl;
+    _sdlsurface = SDL_SetVideoMode(mode.w(), mode.h(), mode.bpp(), flags);    // Установим режим
 
     if(_sdlsurface == NULL)
         throw "Can not set videomode.";
@@ -144,14 +144,12 @@ void Screen::flipScreen()
             throw "Can't lock screen"; // %s\n", SDL_GetError()); 
     }
 
-    for(int y = 0; y < currentMode.w(); y ++)
-        for(int x = 0; x < currentMode.h(); x ++)
+    for(int y = 0; y < currentMode.h(); y ++)
+        for(int x = 0; x < currentMode.w(); x ++)
         {
-            point = _surface[x][y];                         // берём одну точку из нашего буфера
-
+            point = _surface[y][x];                         // берём одну точку из нашего буфера
             /* определим цвет для SDL */
-            c = SDL_MapRGB(_sdlsurface->format, 230,9,9);//point.r(), point.g(), point.b());
-
+            c = SDL_MapRGB(_sdlsurface->format, point.r(), point.g(), point.b());
             /* ставим точку */
             _putpixel(x, y, c);
         }
@@ -159,6 +157,15 @@ void Screen::flipScreen()
     if ( SDL_MUSTLOCK(_sdlsurface) ) 
         SDL_UnlockSurface(_sdlsurface); 
 
+    SDL_UpdateRect(_sdlsurface, 0, 0, currentMode.w(), currentMode.h());
+}
+
+// очистка экрана
+void Screen::clearScreen()
+{
+    for(int y = 0; y < vh; y++)
+       for(int x = 0; x < vw; x++)
+           _surface[y][x] = Color::Black;
 }
 
 // Поставить точку
@@ -226,12 +233,12 @@ void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned in
 {
     int x = x0;
 
-    for(x0; x0 <= x1; x0++)
+    for(; x0 <= x1; x0++)
     {
         putPixel(x0, y0, color);
         putPixel(x0, y0 + y1, color);
     }
-    for(y0; y0 <= y1; y0++)
+    for(; y0 <= y1; y0++)
     {
         putPixel(x, y0, color);
         putPixel(x1, y0 + y1, color);
@@ -241,9 +248,9 @@ void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned in
 // Квадрат
 void Screen::bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
 {
-    for(x0; x0 <= x1; x0++ )
-        for(y0; y0 <= y1; y0++ )
-            putPixel(x0, y0, color);
+    for(int y = y0; y <= y1; y++ )
+        for(int x = x0; x <= x1; x++ )
+            putPixel(x, y, color);
 }
 
 

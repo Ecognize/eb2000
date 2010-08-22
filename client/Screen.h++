@@ -2,6 +2,7 @@
 #define _EB2K_SCREEN_HPP
 
 #include <vector>
+#include <iostream>
 
 #include "SDL.h"
 #include "Color.h++"
@@ -40,11 +41,12 @@ class Screen
         //typedef enum umode {_clean, _vscreen};
 
         /* Пользовательские функции */
-        void  setVideoMode(const VideoMode& mode);    // установить видеорежим
-        //const VideoMode getMaxVideoMode() const;      // получить максимально возможный видеорежим
-        const VideoMode& getVideoMode() const;        // получить текущий видеорежим
-        void  setScaling(/*umode mode*/);                 // установить параметры переноса буфера
-        void  flipScreen();                           // перенести виртуальный буфер на экран
+        void  setVideoMode(const VideoMode& mode);     // установить видеорежим
+        //const VideoMode getMaxVideoMode() const;     // получить максимально возможный видеорежим
+        const VideoMode& getVideoMode() const;         // получить текущий видеорежим
+        void  setScaling(/*umode mode*/);              // установить параметры переноса буфера
+        void  flipScreen();                            // перенести виртуальный буфер на экран
+        void  clearScreen();                           // очистить экран
 
 
         /* Графика */
@@ -54,6 +56,7 @@ class Screen
         void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Линия
         void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Рамка
         void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);   // Закрашенный квадрат
+
 
     private:
         VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
