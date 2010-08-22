@@ -39,7 +39,7 @@ const VideoMode& Screen::getVideoMode() const
 void Screen::setVideoMode(const VideoMode& mode)
 {
     // TODO: Сделать нормальные ошибки (через исключения)
-    Uint32 flags = SDL_HWSURFACE;
+    Uint32 flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
 
     if(mode.fullscreen())
         flags |= SDL_FULLSCREEN;
@@ -157,7 +157,7 @@ void Screen::flipScreen()
     if ( SDL_MUSTLOCK(_sdlsurface) ) 
         SDL_UnlockSurface(_sdlsurface); 
 
-    SDL_UpdateRect(_sdlsurface, 0, 0, currentMode.w(), currentMode.h());
+    SDL_UpdateRect(_sdlsurface, 0, 0, 0, 0);//currentMode.w(), currentMode.h());
 }
 
 // очистка экрана
@@ -166,6 +166,7 @@ void Screen::clearScreen()
     for(int y = 0; y < vh; y++)
        for(int x = 0; x < vw; x++)
            _surface[y][x] = Color::Black;
+    
 }
 
 // Поставить точку
