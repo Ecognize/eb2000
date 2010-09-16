@@ -48,7 +48,6 @@ class Screen
         void  flipScreen();                            // перенести виртуальный буфер на экран
         void  clearScreen();                           // очистить экран
 
-
         /* Графика */
         void putPixel(unsigned int x, unsigned int y, const Color& color);                                  // Поставить точку
         Color getPixel(unsigned int x, unsigned int y);                                                     // Узнать цвет точки
@@ -71,11 +70,11 @@ class Screen
         static const int _base;             // для v-scaling, устанавливается в файле реализации
 
         /* Собсно сами точки */
-        std::vector < std::vector <Color> > _surface; // Экранный буфер
-
+        //std::vector < std::vector <Color> > _surface; // Экранный буфер
+        Color * _surface;
 
         SDL_Surface * _sdlsurface;          // SDL-буфер
-        void _putpixel(int,int,Uint32);     // поставить физическую точку
+        void _putpixel(SDL_Surface*,int,int,Uint32);     // поставить физическую точку
 
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)
