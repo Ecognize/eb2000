@@ -9,23 +9,16 @@ const int Screen::_base = 320;
 /* Конструктор и деструктор */
 Screen::Screen() : currentMode(800,600,16,false)//,tmode(_vscreen)
 {
-    
+    buffer = NULL;
 }
 
-// немного оптимизации: вывод точки для разной глубины цвета
-void (*putpixel)(SDL_Surface*,int,int,Uint32);
-
-void putpixel1(SDL_Surface*,int,int,Uint32);
-void putpixel8(SDL_Surface*,int,int,Uint32);
-void putpixel16(SDL_Surface*,int,int,Uint32);
-void putpixel32(SDL_Surface*,int,int,Uint32);
 
 Screen::~Screen()
 {
     SDL_FreeSurface(_sdlsurface);
     _sdlsurface = NULL;
 
-    free(_surface);
+    buffer = NULL;
 }
 
 
@@ -64,6 +57,8 @@ void Screen::setVideoMode(const VideoMode& mode)
     std::cout<<"Mode verified: "<<mode.w()<<"x"<<mode.h()<<"x"<<bpp<<std::endl;
     _sdlsurface = SDL_SetVideoMode(mode.w(), mode.h(), mode.bpp(), flags);    // Установим режим
 
+    buffer = _sdlsurface->pixels;
+    
     if(_sdlsurface == NULL)
         throw "Can not set videomode.";
 
@@ -71,24 +66,27 @@ void Screen::setVideoMode(const VideoMode& mode)
     currentMode.w() = mode.w();
     currentMode.h() = mode.h();
     currentMode.bpp() = bpp;
+    currentMode.pitch() = _sdlsurface->pitch;
 
+    //buffer = _sdlsurface->pixels;
+    
     // определим нужную процедуру для вывода точки
-    switch(bpp)
+    switch(_sdlsurface->format->BytesPerPixel)
     {
         case 1:
-        putpixel = putpixel1;
+        putpixel = &Screen::putpixel1;
         break;
 
-        case 8:
-        putpixel = putpixel8;
+        case 2:
+        putpixel = &Screen::putpixel2;
         break;
 
-        case 16:
-        putpixel = putpixel16;
+        case 3:
+        putpixel = &Screen::putpixel3;
         break;
 
-        case 32:
-        putpixel = putpixel32;
+        case 4:
+        putpixel = &Screen::putpixel4;
         break;
     }
 }
@@ -124,37 +122,35 @@ void Screen::setScaling(/*umode mode*/)
             _surface[i].push_back(Color::Black);
     }*/
     /* ^^^^ Setting size of _surface to [vw] * [vh])*/
-    int size = sizeof(Color) * vw * vh;
+    int size = sizeof(Uint32) * vw * vh;
     std::cout<<"Allocating "<<size / 1024<<" Kb..."<<std::endl;
 
-    _surface = (Color *)malloc(size);
+    //_surface = (Uint32 *)malloc(size);
 }
 
+SDL_Surface * Screen::getSurface()
+{
+    return _sdlsurface;
+}
+// Физический вывод точки: основная функция и оптимизированные варианты
 void Screen::_putpixel(SDL_Surface *s,int x, int y, Uint32 pixel) 
 {
-    (*putpixel)(s, x, y, pixel);
+    //(*putpixel)(s, x, y, pixel);
 }
 
-void putpixel1(SDL_Surface *s, int x, int y, Uint32 pixel)
+void Screen::putpixel1(int x, int y, Uint32 pixel)
 {
-    int bpp = s->format->BytesPerPixel;
-    Uint8 *p = (Uint8 *)s->pixels + y * s->pitch + x * bpp;
-
-    *p = pixel;
+   *((Uint8 *)buffer + y * currentMode.pitch() + x) = pixel;
 }
 
-void putpixel8(SDL_Surface *s, int x, int y, Uint32 pixel)
+void Screen::putpixel2(int x, int y, Uint32 pixel)
 {
-    int bpp = s->format->BytesPerPixel;
-    Uint8 *p = (Uint8 *)s->pixels + y * s->pitch + x * bpp;
-
-    *(Uint16 *)p = pixel;
+    *((Uint16 *)buffer + y * currentMode.pitch()/2 + x) = pixel;
 }
 
-void putpixel16(SDL_Surface *s, int x, int y, Uint32 pixel)
+void Screen::putpixel3(int x, int y, Uint32 pixel)
 {
-    int bpp = s->format->BytesPerPixel;
-    Uint8 *p = (Uint8 *)s->pixels + y * s->pitch + x * bpp;
+    Uint8 *p = (Uint8 *)buffer + y * currentMode.pitch() + x * 3;
 
     if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
         p[0] = (pixel >> 16) & 0xff;
@@ -167,12 +163,9 @@ void putpixel16(SDL_Surface *s, int x, int y, Uint32 pixel)
     }
 }
 
-void putpixel32(SDL_Surface *s, int x, int y, Uint32 pixel)
+void Screen::putpixel4(int x, int y, Uint32 pixel)
 {
-    int bpp = s->format->BytesPerPixel;
-    Uint8 *p = (Uint8 *)s->pixels + y * s->pitch + x * bpp;
-
-    *(Uint32 *)p = pixel;
+    *((Uint32 *)buffer + y * currentMode.pitch()/4 + x) = pixel;
 }
 
 // Перенести виртуальный буфер на физический экран, главный bottle-neck
@@ -180,58 +173,55 @@ void Screen::flipScreen()
 {
     // Пока что забудем про umode и будем переписывать напрямую
 
-    Uint32 c;                                       // цвет для SDL
-    Color point;                                    // текущая точка виртуального экрана
-
     // заблокируем экран ( я без этого делал, но тут пусть будет)
-    if ( SDL_MUSTLOCK(_sdlsurface) )
-    {
+   /* if ( SDL_MUSTLOCK(_sdlsurface) )
         if ( SDL_LockSurface(_sdlsurface) < 0 ) 
-            throw "Can't lock screen"; // %s\n", SDL_GetError()); 
-    }
+            throw "Can't lock screen"; // %s\n", SDL_GetError());*/
 
-    for(int y = 0; y < currentMode.h(); y ++)
+   /* for(int y = 0; y < currentMode.h(); y ++)
         for(int x = 0; x < currentMode.w(); x ++)
-        {
-            point = _surface[x + vw * y];                         // берём одну точку из нашего буфера
-            /* определим цвет для SDL */
-            c = SDL_MapRGB(_sdlsurface->format, point.r(), point.g(), point.b());
-            /* ставим точку */
-            (*putpixel)(_sdlsurface, x, y, c);
-        }
+          (*putpixel)(_sdlsurface, x, y, _surface[x + vw * y]);
+*/
+      //memcpy(_sdlsurface->pixels, buffer, sizeof(_sdlsurface->pixels));
+      //SDL_LockSurface(_sdlsurface);
+      //_sdlsurface->pixels = buffer;
+      //memcpy(_sdlsurface->pixels, buffer, sizeof(_sdlsurface->pixels));
+      //SDL_UnlockSurface(_sdlsurface);
     // разблокируем обратно
-    if ( SDL_MUSTLOCK(_sdlsurface) )
-        SDL_UnlockSurface(_sdlsurface); 
+    /*if ( SDL_MUSTLOCK(_sdlsurface) )
+        SDL_UnlockSurface(_sdlsurface); */
 
-    SDL_UpdateRect(_sdlsurface, 0, 0, 0, 0);//currentMode.w(), currentMode.h());
+    //currentMode.w(), currentMode.h());
+    //SDL_BlitSurface(buffer, 0, _sdlsurface, 0);
+    SDL_UpdateRect(_sdlsurface, 0, 0, 0, 0);
 }
 
 // очистка экрана
 void Screen::clearScreen()
 {
-    for(int y = 0; y < vh; y++)
+    /*for(int y = 0; y < vh; y++)
        for(int x = 0; x < vw; x++)
-           _surface[x + vw * y] = Color::Black;
+           _surface[x + vw * y] = Color::Black;*/
     
 }
 
 // Поставить точку
-void Screen::putPixel(unsigned int x, unsigned int y, const Color& color) 
+void Screen::putPixel(unsigned int x, unsigned int y, Uint32 &color)
 {
-    _surface[x + vw * y] = color;
-   //_putpixel(x, y, SDL_MapRGB(_sdlsurface->format, color.r(), color.g(), color.b()));
+   // _surface[x + vw * y] = color;
+    (this->*putpixel)(x, y, color);
 }
 
 // Узнать цвет точки
-Color Screen::getPixel(unsigned int x, unsigned int y)
+template <class ColorType> ColorType Screen::getPixel(unsigned int x, unsigned int y)
 {
-    return _surface[x + vw * y];
+    return 1;//surface[x + vw * y];
 }
 
 /* Графические примитивы */
 
 // Линия
-void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
+template <class ColorType> void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color)
 {
     int dy = y1 - y0;
     int dx = x1 - x0;
@@ -277,7 +267,7 @@ void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned in
 }
 
 // Рамка
-void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
+template <class ColorType> void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color)
 {
     int x = x0;
 
@@ -294,7 +284,7 @@ void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned in
 }
 
 // Квадрат
-void Screen::bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
+template <class ColorType> void Screen::bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color)
 {
     for(int y = y0; y <= y1; y++ )
         for(int x = x0; x <= x1; x++ )

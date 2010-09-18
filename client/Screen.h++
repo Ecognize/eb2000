@@ -5,22 +5,24 @@
 #include <iostream>
 
 #include "SDL.h"
-#include "Color.h++"
+//#include "Color.h++"
 
 
 class VideoMode
 {
     public:
-        VideoMode(int w,int h,int bpp=24,bool f=false) : _x(w),_y(h),_bpp(bpp),_fullscreen(f) {  }
+        VideoMode(int w,int h,int bpp=24,bool f=false, int p=1280) : _x(w),_y(h),_bpp(bpp),_fullscreen(f),_pitch(p) {  }
 
         unsigned w()          const { return _x; }
         unsigned h()          const { return _y; }
         unsigned bpp()        const { return _bpp; }
+        unsigned pitch()      const { return _pitch; }
         bool     fullscreen() const { return _fullscreen; }
 
         unsigned &w()           { return _x; }
         unsigned &h()           { return _y; }
         unsigned &bpp()         { return _bpp; }
+        unsigned &pitch()       { return _pitch; }
         bool     &fullscreen()  { return _fullscreen; }
 
 
@@ -29,6 +31,7 @@ class VideoMode
         unsigned int _x;                    // Аппаратный используемый x
         unsigned int _y;                    // Аппаратный используемый y
         unsigned int _bpp;                  // Сколько бит на пиксел
+        unsigned int _pitch;                 // for SDL
         bool _fullscreen;                   // Во весь экран или окно?
 };
 
@@ -49,18 +52,17 @@ class Screen
         void  clearScreen();                           // очистить экран
 
         /* Графика */
-        void putPixel(unsigned int x, unsigned int y, const Color& color);                                  // Поставить точку
-        Color getPixel(unsigned int x, unsigned int y);                                                     // Узнать цвет точки
+        void putPixel(unsigned int x, unsigned int y, Uint32& color);                              // Поставить точку
+        template <class ColorType> ColorType getPixel(unsigned int x, unsigned int y);                                                 // Узнать цвет точки
 
-        void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Линия
-        void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);  // Рамка
-        void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color);   // Закрашенный квадрат
+        template <class ColorType> void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);  // Линия
+        template <class ColorType> void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);  // Рамка
+        template <class ColorType> void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);   // Закрашенный квадрат
 
-
+        SDL_Surface * getSurface();
     private:
         VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
         bool hmax;                          // Используется ли максимальное разрешение?
-        //umode tmode;
 
         /* "Игровые" или виртуальные данные, описание игрового экрана */
         unsigned int vw;                    // Виртуальный x 
@@ -69,12 +71,20 @@ class Screen
 
         static const int _base;             // для v-scaling, устанавливается в файле реализации
 
-        /* Собсно сами точки */
-        //std::vector < std::vector <Color> > _surface; // Экранный буфер
-        Color * _surface;
+        void * buffer;
 
         SDL_Surface * _sdlsurface;          // SDL-буфер
+
         void _putpixel(SDL_Surface*,int,int,Uint32);     // поставить физическую точку
+
+        // указатель
+        void (Screen::*putpixel)(int,int,Uint32);
+
+        // для разной глубины цвета (байтов на точку)
+        void putpixel1(int, int, Uint32);
+        void putpixel2(int, int, Uint32);
+        void putpixel3(int, int, Uint32);
+        void putpixel4(int, int, Uint32);
 
         /* Прочее */
         unsigned short fps;                 // Понты колотить :)
