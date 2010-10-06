@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "SDL.h"
-//#include "Color.h++"
+#include "Color.h++"
 
 
 class VideoMode
@@ -31,87 +31,111 @@ class VideoMode
         unsigned int _x;                    // Аппаратный используемый x
         unsigned int _y;                    // Аппаратный используемый y
         unsigned int _bpp;                  // Сколько бит на пиксел
-        unsigned int _pitch;                 // for SDL
+        unsigned int _pitch;                // for SDL
         bool _fullscreen;                   // Во весь экран или окно?
 };
 
+// base template container for both rendering types
+class Render
+{
+	public:
+		Render();
+		Render(enum renderType type);
+		virtual ~Render();
+		
+        virtual void  setVideoMode(const VideoMode& mode);    // установить видеорежим
+        //const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
+        virtual const VideoMode& getVideoMode() const;        // получить текущий видеорежим
+        virtual void  flipEntireScreen();                     // перенести виртуальный буфер на экран
+        virtual void  clearScreen();                          // очистить экран
+
+        template <class ColorType> virtual void putPixel(unsigned int x, unsigned int y, const ColorType & color);                              // Поставить точку
+        template <class ColorType> virtual ColorType getPixel(unsigned int x, unsigned int y);                                                 // Узнать цвет точки
+
+        template <class ColorType> virtual void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);  // Линия
+        template <class ColorType> virtual void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);  // Рамка
+        template <class ColorType> virtual void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);   // Закрашенный квадрат
+
+	private:
+		SDL_Surface * sdlSurface;    // physical screen
+		std::vector <Color> buffer;  // screen buffer
+		int vx;                      // his width
+		int vy;                      // and height
+		int psize;                   // size of physical point in px
+		static const int _base;      // width of emulated screen (320 px)
+};
+
+// pure SDL software rendering
+class SoftwareRender : public Render
+{
+	/* note: in this class we're forgiving about virtual buffer
+	   and drawing directly on the SDL surface */
+	   
+	public:
+ 	    void  setVideoMode(const VideoMode& mode);
+        //const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
+        const VideoMode& getVideoMode() const; 
+        void  flipEntireScreen();  // SDL_UpdateRect will be here
+        void  clearScreen(); 
+
+		void putPixel(unsigned int x, unsigned int y, Uint32 & color);
+		Uint32 getPixel (unsigned int x, unsigned int y);
+
+        void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Uint32 & color);  
+        void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Uint32 & color); 
+        void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Uint32 & color);
+        
+		// TODO: this stuff with pointers        
+        // putpixel optimizations для разной глубины цвета (байтов на точку)
+        void putpixel1(int, int, Uint32);
+        void putpixel2(int, int, Uint32);
+        void putpixel3(int, int, Uint32);
+        void putpixel4(int, int, Uint32);
+	private:
+		int bpp; // bytes per pixel
+};
+
+// OpenGL hardware rendering (in SDL wrapper)
+class HardwareRender : public Render
+{
+	// TODO: all
+	/* note: in this class we're actively using virtual screen buffer, and
+       communication with real screen happens only in flipEntireScreen()
+       (for now).
+    */
+    	
+ 	public:
+ 	    void  setVideoMode(const VideoMode& mode);
+        //const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
+        const VideoMode& getVideoMode() const; 
+        void  flipEntireScreen();  // drawing gl_quads 
+        void  clearScreen(); 
+        
+		void  putPixel (unsigned int x, unsigned int y, const Color & color);
+        Color getPixel (unsigned int x, unsigned int y);
+
+        void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color);  
+        void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color); 
+        void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color);
+    private:
+		// various OpenGL stuff
+};
+
+// base screen class
 class Screen
 {
     public:
         Screen();
         ~Screen();
 
-        //typedef enum umode {_clean, _vscreen};
-
-        /* Пользовательские функции */
-        void  setVideoMode(const VideoMode& mode);     // установить видеорежим
-        //const VideoMode getMaxVideoMode() const;     // получить максимально возможный видеорежим
-        const VideoMode& getVideoMode() const;         // получить текущий видеорежим
-        void  setScaling(/*umode mode*/);              // установить параметры переноса буфера
-        void  flipScreen();                            // перенести виртуальный буфер на экран
-        void  clearScreen();                           // очистить экран
-
-        /* Графика */
-        void putPixel(unsigned int x, unsigned int y, Uint32& color);                              // Поставить точку
-        template <class ColorType> ColorType getPixel(unsigned int x, unsigned int y);                                                 // Узнать цвет точки
-
-        template <class ColorType> void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);  // Линия
-        template <class ColorType> void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);  // Рамка
-        template <class ColorType> void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color);   // Закрашенный квадрат
-
-        SDL_Surface * getSurface();
+		/* Graphics container and its type */
+		Render render;
+		enum renderType = {software, hardware};
+		
     private:
         VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
         bool hmax;                          // Используется ли максимальное разрешение?
-
-        /* "Игровые" или виртуальные данные, описание игрового экрана */
-        unsigned int vw;                    // Виртуальный x 
-        unsigned int vh;                    // Виртуальный y
-        unsigned int vratio;                // Размер точки для виртуального экрана
-
-        static const int _base;             // для v-scaling, устанавливается в файле реализации
-
-        void * buffer;
-
-        SDL_Surface * _sdlsurface;          // SDL-буфер
-
-        void _putpixel(SDL_Surface*,int,int,Uint32);     // поставить физическую точку
-
-        // указатель
-        void (Screen::*putpixel)(int,int,Uint32);
-
-        // для разной глубины цвета (байтов на точку)
-        void putpixel1(int, int, Uint32);
-        void putpixel2(int, int, Uint32);
-        void putpixel3(int, int, Uint32);
-        void putpixel4(int, int, Uint32);
-
-        /* Прочее */
         unsigned short fps;                 // Понты колотить :)
 };
 
-/* Предполагаемый вариант использования этого класса:
-
-    vi my;          <-- elfy: Миша, это полное гавно! данные нужно инициализировать
-    my.x = 1024;        xela: Похуй. Это написано как пример, и акцент тут на setScaling.
-    my.y = 768;
-    my.bpp = 32;
-
-    setVideoMode(my);       <-- тут собсно устанавливаем видеорежим
-    setScaling(_vscreen);   <-- а тут устанавливаются значения vx, vy, vratio:
-                            vratio = my.x / _base;
-                            vx = _base;
-                            vy = y / vratio;
-
-                            и сам буфер теперь выглядит так: _surface[vx][vy]
-
-    Иначе говоря, размеры _surface определяются при вызове этой функции
-    elfy: пока что молчу, но отвыкай от Си ---V
-    
-    setVideoMode(VideoMode(1024,768,32));
-    или
-    VideoMode v(1024,768,32);
-    setVideoMode(v);
-
-*/
 #endif
