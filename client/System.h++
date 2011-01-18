@@ -50,7 +50,13 @@ class System
         /* Управление конфигурацией */
         static void saveConfig();                            // Записать настройки в файл
         static void loadConfig();                            // Или прочитать их
-        
+
+        std::string getOption(std::string keyname);          // get string option
+        long        getOption(std::string keyname);          // get integer option
+
+        static void putOption(std::string keyname, std::string valname); // put string option
+        static void putOption(std::string keyname, int valname)          // put integer option
+
         /* Функции системы */
         static void init();                                 // Начать работу; проинициализировать либы
         static void shutdown();                             // Завершить работу системы
@@ -67,18 +73,13 @@ class System
     private:
         /* TODO: данные, заданные реализацией, писать сюда */
 
+        // настройки
+        std::vector <std::string> Sets;
+
         /* Видео */ 
         Screen screen;
 
         /* Аудио */
-    // а это тогда уже разве не в саунде?
-    // elfy: можно и в саунде, только for the love of God, поставь в редакторе 4 пробела, а не таб,
-    // или давай уже везде табы
-    // xela: хорошо, 4 пробела. Я кстати начал входить во вкус)
-    // elfy: кстати, как у тебя дела?
-    // В какой сфере? :)
-    // elfy: в сфере Огня :)))
-    // xela: O_o :))) кипят)
         bool soundOn;                       // Включён ли звук?
         unsigned int mixerVolume;           // Главная громкость
 

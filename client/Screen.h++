@@ -44,7 +44,7 @@ class Render
 		virtual ~Render();
 		
         virtual void  setVideoMode(const VideoMode& mode);    // установить видеорежим
-        //const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
+        //const VideoMode getMaxVideoMode() const;            // получить максимально возможный видеорежим
         virtual const VideoMode& getVideoMode() const;        // получить текущий видеорежим
         virtual void  flipEntireScreen();                     // перенести виртуальный буфер на экран
         virtual void  clearScreen();                          // очистить экран
