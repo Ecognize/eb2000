@@ -1,4 +1,4 @@
-#include "ActorClass.h++"
+#include "ActorClass.hpp"
 
 ClassLibrary& ClassLibrary::instance()
 {

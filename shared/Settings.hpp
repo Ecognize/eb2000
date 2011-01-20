@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
+#include <cstdlib>    // only for exit(); need to b removed
 #include <string>
 #include <map>
 
@@ -15,16 +15,16 @@ class Settings
         ~Settings();
 
         /* fetching */
-        std::string get(std::string key);       // get value by key
+        std::string get(std::string key);             // get value by key
 
         /* setting and erasing */
         void set(std::string key, std::string value); // set new value; existing key will be overwritten
-        void erase(std::string key);            // erase value with specified key
+        void erase(std::string key);                  // erase value with specified key
 
         /* general purpose */
-        void save();                            // flush data to file
-        void read();                            // parse file
-        unsigned int getCount();
+        void save();                                  // flush data to file
+        void read();                                  // parse file
+        unsigned int getCount();                      // get data count
         const std::map <std::string, std::string> getData();
 
     private:

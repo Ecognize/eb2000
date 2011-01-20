@@ -2,13 +2,14 @@
 #ifndef _EB2K_SYSTEM_HPP_
 #define _EB2K_SYSTEM_HPP_
 
-//#include "Defs.h++"
+//#include "Defs.hpp"
 //так пойдёт?
 // elfy: вполне, только пока там ничего нет
 // xela: будет
 
-#include "Vector.h++"
-#include "Screen.h++"
+#include "Vector.hpp"
+#include "Screen.hpp"
+#include "../shared/Settings.hpp"
 //#include "Sound.h++"
 
 
@@ -47,10 +48,6 @@ class System
         static void errorBox(const std::string&);           // Окно ошибки
         static bool questionBox(const std::string&);        // Окно «да/нет» вопроса
 
-        /* Управление конфигурацией */
-        static void saveConfig();                            // Записать настройки в файл
-        static void loadConfig();                            // Или прочитать их
-
         std::string getOption(std::string keyname);          // get string option
         long        getOption(std::string keyname);          // get integer option
 
@@ -73,11 +70,11 @@ class System
     private:
         /* TODO: данные, заданные реализацией, писать сюда */
 
-        // настройки
-        std::vector <std::string> Sets;
-
         /* Видео */ 
         Screen screen;
+
+        /* Управление конфигурацией */
+        Settings options;
 
         /* Аудио */
         bool soundOn;                       // Включён ли звук?

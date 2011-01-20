@@ -1,4 +1,4 @@
-#include "Actor.h++"
+#include "Actor.hpp"
 #include <cassert>
 
 /* Конструкция */

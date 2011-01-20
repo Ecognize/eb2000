@@ -1,8 +1,8 @@
 #ifndef _EB2K_ACTOR_HPP_
 #define _EB2K_ACTOR_HPP_
 
-#include "Vector.h++"
-#include "ActorClass.h++"
+#include "Vector.hpp"
+#include "ActorClass.hpp"
 
 class Actor
 {

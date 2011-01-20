@@ -1,5 +1,5 @@
-#include "Exception.h++"
-#include "System.h++"
+#include "Exception.hpp"
+#include "System.hpp"
 
 /* Конструкторы/деструкторы */
 Exception::Exception(Exception::Severity sev) : _sev(sev) {}

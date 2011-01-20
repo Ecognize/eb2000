@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "SDL.h"
-#include "Color.h++"
+#include "Color.hpp"
 
 
 class VideoMode
