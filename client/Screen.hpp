@@ -8,6 +8,8 @@
 #include "SDL/SDL_opengl.h"
 #include "Color.hpp"
 
+#define  FLIP_DIRECT   1
+#define  FLIP_VIRTUAL  0
 
 // video mode container
 class VideoMode

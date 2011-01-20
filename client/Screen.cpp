@@ -10,7 +10,7 @@ const int Screen::virtualb = 320;
 /* Конструктор и деструктор */
 Screen::Screen() : currentMode(800,600,16,false)
 {
-    sfmode = 0;    // drawing to virtual
+    sfmode = FLIP_VIRTUAL;    // drawing to virtual
 }
 
 Screen::~Screen()
@@ -113,47 +113,27 @@ void Screen::setMode(int m)
 
 void Screen::flipEntireScreen()
 {
-    // Пока что забудем про umode и будем переписывать напрямую
+    if(sfmode == FLIP_VIRTUAL)   // flip virtual screen
+    {
+        Color point;
 
-    // заблокируем экран ( я без этого делал, но тут пусть будет)
-   /* if ( SDL_MUSTLOCK(_sdlsurface) )
-        if ( SDL_LockSurface(_sdlsurface) < 0 ) 
-            throw "Can't lock screen"; // %s\n", SDL_GetError());*/
+        for(int y = 0; y < virtualh; y ++)
+            for(int x = 0; x < virtualw; x ++)
+            {
+                point = buffer[x + virtualw * y];
 
-   /* for(int y = 0; y < currentMode.h(); y ++)
-        for(int x = 0; x < currentMode.w(); x ++)
-          (*putpixel)(_sdlsurface, x, y, _surface[x + vw * y]);
-*/
-      //memcpy(_sdlsurface->pixels, buffer, sizeof(_sdlsurface->pixels));
-      //SDL_LockSurface(_sdlsurface);
-      //_sdlsurface->pixels = buffer;
-      //memcpy(_sdlsurface->pixels, buffer, sizeof(_sdlsurface->pixels));
-      //SDL_UnlockSurface(_sdlsurface);
-    // разблокируем обратно
-    /*if ( SDL_MUSTLOCK(_sdlsurface) )
-        SDL_UnlockSurface(_sdlsurface); */
+                glColor4ub(point.r(), point.g(), point.b(), point.a());
 
-    //currentMode.w(), currentMode.h());
-    //SDL_BlitSurface(buffer, 0, _sdlsurface, 0);
+                glBegin(GL_QUADS);
+                    glVertex2i(shift + x * virtuals, y * virtuals);
+                    glVertex2i(shift + x * virtuals + virtuals, y * virtuals);
+                    glVertex2i(shift + x * virtuals + virtuals, y * virtuals + virtuals);
+                    glVertex2i(shift + x * virtuals, y * virtuals + virtuals);
+                glEnd();
+            }
+    }
 
-
-    //for(it = buffer.begin(); it != buffer.end(); it++)
-    Color point;
-
-    for(int y = 0; y < virtualh; y ++)
-        for(int x = 0; x < virtualw; x ++)
-        {
-            point = buffer[x + virtualw * y];
-
-            glColor4ub(point.r(), point.g(), point.b(), point.a());
-
-            glBegin(GL_QUADS);
-                glVertex2i(shift + x * virtuals, y * virtuals);
-                glVertex2i(shift + x * virtuals + virtuals, y * virtuals);
-                glVertex2i(shift + x * virtuals + virtuals, y * virtuals + virtuals);
-                glVertex2i(shift + x * virtuals, y * virtuals + virtuals);
-            glEnd();
-        }
+    // update screen anyway
     SDL_GL_SwapBuffers();
     SDL_UpdateRect(context, 0, 0, 0, 0);
 }
@@ -170,7 +150,15 @@ void Screen::clearScreen()
 // Поставить точку
 void Screen::putPixel(unsigned int x, unsigned int y, const Color &color)
 {
-   buffer[x + virtualw * y] = color;
+    if(sfmode == FLIP_VIRTUAL)
+        buffer[x + virtualw * y] = color;
+    else    // just put physical point
+    {
+        glColor4ub(color.r(), color.g(), color.b(), color.a());
+        glBegin(GL_POINTS);
+            glVertex2i(x, y);
+        glEnd();
+    }
 }
 
 // Узнать цвет точки
