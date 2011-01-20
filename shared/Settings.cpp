@@ -94,7 +94,7 @@ void Settings::read()
             } // else unrecognized string; TODO: error ?
         }
     }
-    catch (std::fstream::failure) { }
+    catch (std::fstream::failure e) { std::cout << "smth happened during parsing" << endl; }
 }
 
 // write file

@@ -3,7 +3,7 @@
 
 #include "Screen.h++"
 
-
+// emulate 320x2xx screen
 const int Screen::_base = 320;
 
 /* Конструктор и деструктор */

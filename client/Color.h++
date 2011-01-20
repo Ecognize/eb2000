@@ -4,7 +4,7 @@
 class Color
 {
     public:
-        Color(int r, int g, int b, int a = 0) : _r(r), _g(g), _b(b), _a(a) {  }
+        Color(unsigned short r, unsigned short g, unsigned short b, unsigned short a = 0) : _r(r), _g(g), _b(b), _a(a) {  }
         Color() { }
 
         unsigned short r() const { return _r; }
@@ -28,6 +28,8 @@ class Color
         // elfy: g++ может тут и без ссылок, но пусть пока будет так, безопаснее по-моему.
 
         // elfy: тут нужно написать хотя бы парочку операторов для цветов, смешивание, AND/OR итд, мне кажется
+
+        Color & operator & (Color &c);
     private:
         unsigned short _r;
         unsigned short _g;

@@ -1,5 +1,5 @@
-#ifndef SETTINGS_HPP
-#define SETTINGS_HPP
+#ifndef _EB2K_SETTINGS_HPP
+#define _EB2K_SETTINGS_HPP
 
 #include <iostream>
 #include <fstream>
@@ -22,19 +22,19 @@ class Settings
         void erase(std::string key);            // erase value with specified key
 
         /* general purpose */
-        void save();                            // flush vectors to file
+        void save();                            // flush data to file
         void read();                            // parse file
         unsigned int getCount();
         const std::map <std::string, std::string> getData();
 
     private:
-        std::map <std::string, std::string> data;
-        std::map <std::string, std::string>::iterator it;
-        std::string filename;
-        std::fstream fs;
-        unsigned int sz;
+        std::map <std::string, std::string> data;           // data container
+        std::map <std::string, std::string>::iterator it;   // its iterator
+        std::string filename;                               // filename storage
+        std::fstream fs;                                    // stream descriptor
+        unsigned int sz;                                    // number of settings
 
-        std::string trim(std::string s);         // trim whitespaces
+        std::string trim(std::string s);                    // trim whitespaces
 };
 
-#endif // SETTINGS_HPP
+#endif // _EB2K_SETTINGS_HPP
