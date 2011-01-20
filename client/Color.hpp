@@ -25,11 +25,12 @@ class Color
         static const Color& Red;
         static const Color& Green;
         static const Color& Blue;
+        static const Color& Yellow;
         // elfy: g++ может тут и без ссылок, но пусть пока будет так, безопаснее по-моему.
 
         // elfy: тут нужно написать хотя бы парочку операторов для цветов, смешивание, AND/OR итд, мне кажется
 
-        Color & operator & (Color &c);
+        Color & operator & (const Color &c);
     private:
         unsigned short _r;
         unsigned short _g;

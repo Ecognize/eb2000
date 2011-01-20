@@ -4,21 +4,18 @@
 #include "Screen.hpp"
 
 // emulate 320x2xx screen
-const int Screen::_base = 320;
+const int Screen::virtualb = 320;
 
 /* Конструктор и деструктор */
-Screen::Screen() : currentMode(800,600,16,false)//,tmode(_vscreen)
+Screen::Screen() : currentMode(800,600,16,false)
 {
-    buffer = NULL;
+    sfmode = 0;    // drawing to virtual
 }
-
 
 Screen::~Screen()
 {
-    SDL_FreeSurface(_sdlsurface);
-    _sdlsurface = NULL;
-
-    buffer = NULL;
+    SDL_FreeSurface(context);
+    context = NULL;
 }
 
 
@@ -42,7 +39,7 @@ const VideoMode& Screen::getVideoMode() const
 void Screen::setVideoMode(const VideoMode& mode)
 {
     // TODO: Сделать нормальные ошибки (через исключения)
-    Uint32 flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
+    Uint32 flags = SDL_OPENGL;
 
     if(mode.fullscreen())
         flags |= SDL_FULLSCREEN;
@@ -54,122 +51,44 @@ void Screen::setVideoMode(const VideoMode& mode)
         throw "Mode is not available.";
         //exit(-1);
     }
-    std::cout<<"Mode verified: "<<mode.w()<<"x"<<mode.h()<<"x"<<bpp<<std::endl;
-    _sdlsurface = SDL_SetVideoMode(mode.w(), mode.h(), mode.bpp(), flags);    // Установим режим
 
-    buffer = _sdlsurface->pixels;
+    // TODO: make normal debug messages
+    std::cout << "Mode verified: " << mode.w() << "x" << mode.h() << "x" << bpp << std::endl;
+    context = SDL_SetVideoMode(mode.w(), mode.h(), mode.bpp(), flags);    // Установим режим
     
-    if(_sdlsurface == NULL)
+    if(context == NULL)
         throw "Can not set videomode.";
 
     // Заполним инфо о режиме
     currentMode.w() = mode.w();
     currentMode.h() = mode.h();
     currentMode.bpp() = bpp;
-    currentMode.pitch() = _sdlsurface->pitch;
 
-    //buffer = _sdlsurface->pixels;
-    
-    // определим нужную процедуру для вывода точки
-    switch(_sdlsurface->format->BytesPerPixel)
-    {
-        case 1:
-        putpixel = &Screen::putpixel1;
-        break;
+    // fill up virtual screen data
+    virtualw = virtualb;
+    virtuals = currentMode.w() / virtualb;
+    virtualh = currentMode.h() / virtuals;
 
-        case 2:
-        putpixel = &Screen::putpixel2;
-        break;
+    // make vector
+    for (int i = 0; i < virtualh * virtualw; i++)
+        buffer.push_back(Color::Black);
 
-        case 3:
-        putpixel = &Screen::putpixel3;
-        break;
-
-        case 4:
-        putpixel = &Screen::putpixel4;
-        break;
-    }
+    std::cout << "Virtual screen initialized: " << virtualw << "x" << virtualh << ", pixel size is " << virtuals << std::endl;
 }
 
-// Установить сглаживание
-void Screen::setScaling(/*umode mode*/)
+// get screen flipping mode
+int Screen::getMode()
 {
-    /*switch(mode)
-    {
-        case _clean:*/
-        vw = currentMode.w();
-        vh = currentMode.h();
-        //tmode = _clean;
-        /*break;
-
-        case _vscreen:
-        vratio = currentMode.w() / _base;
-        vw = _base;
-        vh = currentMode.h() / vratio;
-        tmode = _vscreen;
-        break;
-
-        default:
-        setScaling(_clean);
-        break;
-    }*/
-
-    /*for (int i = 0; i < vh; i++ )
-    {
-        _surface.push_back( std::vector <Color>() );
-
-        for(int j = 0; j < vw; j++ )
-            _surface[i].push_back(Color::Black);
-    }*/
-    /* ^^^^ Setting size of _surface to [vw] * [vh])*/
-    int size = sizeof(Uint32) * vw * vh;
-    std::cout<<"Allocating "<<size / 1024<<" Kb..."<<std::endl;
-
-    //_surface = (Uint32 *)malloc(size);
+    return sfmode;
 }
 
-SDL_Surface * Screen::getSurface()
+// set screen flipping mode
+void Screen::setMode(int m)
 {
-    return _sdlsurface;
-}
-// Физический вывод точки: основная функция и оптимизированные варианты
-void Screen::_putpixel(SDL_Surface *s,int x, int y, Uint32 pixel) 
-{
-    //(*putpixel)(s, x, y, pixel);
+    sfmode = m;
 }
 
-void Screen::putpixel1(int x, int y, Uint32 pixel)
-{
-   *((Uint8 *)buffer + y * currentMode.pitch() + x) = pixel;
-}
-
-void Screen::putpixel2(int x, int y, Uint32 pixel)
-{
-    *((Uint16 *)buffer + y * currentMode.pitch()/2 + x) = pixel;
-}
-
-void Screen::putpixel3(int x, int y, Uint32 pixel)
-{
-    Uint8 *p = (Uint8 *)buffer + y * currentMode.pitch() + x * 3;
-
-    if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-        p[0] = (pixel >> 16) & 0xff;
-        p[1] = (pixel >> 8) & 0xff;
-        p[2] = pixel & 0xff;
-    } else {
-        p[0] = pixel & 0xff;
-        p[1] = (pixel >> 8) & 0xff;
-        p[2] = (pixel >> 16) & 0xff;
-    }
-}
-
-void Screen::putpixel4(int x, int y, Uint32 pixel)
-{
-    *((Uint32 *)buffer + y * currentMode.pitch()/4 + x) = pixel;
-}
-
-// Перенести виртуальный буфер на физический экран, главный bottle-neck
-void Screen::flipScreen()
+void Screen::flipEntireScreen()
 {
     // Пока что забудем про umode и будем переписывать напрямую
 
@@ -193,7 +112,7 @@ void Screen::flipScreen()
 
     //currentMode.w(), currentMode.h());
     //SDL_BlitSurface(buffer, 0, _sdlsurface, 0);
-    SDL_UpdateRect(_sdlsurface, 0, 0, 0, 0);
+    SDL_UpdateRect(context, 0, 0, 0, 0);
 }
 
 // очистка экрана
@@ -206,22 +125,21 @@ void Screen::clearScreen()
 }
 
 // Поставить точку
-void Screen::putPixel(unsigned int x, unsigned int y, Uint32 &color)
+void Screen::putPixel(unsigned int x, unsigned int y, const Color &color)
 {
-   // _surface[x + vw * y] = color;
-    (this->*putpixel)(x, y, color);
+   buffer[x + virtualw * y] = color;
 }
 
 // Узнать цвет точки
-template <class ColorType> ColorType Screen::getPixel(unsigned int x, unsigned int y)
+Color Screen::getPixel(unsigned int x, unsigned int y)
 {
-    return 1;//surface[x + vw * y];
+    return buffer.at(x + virtualw * y);
 }
 
 /* Графические примитивы */
 
 // Линия
-template <class ColorType> void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color)
+void Screen::line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
 {
     int dy = y1 - y0;
     int dx = x1 - x0;
@@ -267,7 +185,7 @@ template <class ColorType> void Screen::line(unsigned int x0, unsigned int y0, u
 }
 
 // Рамка
-template <class ColorType> void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color)
+void Screen::rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
 {
     int x = x0;
 
@@ -284,7 +202,7 @@ template <class ColorType> void Screen::rect(unsigned int x0, unsigned int y0, u
 }
 
 // Квадрат
-template <class ColorType> void Screen::bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const ColorType& color)
+void Screen::bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color& color)
 {
     for(int y = y0; y <= y1; y++ )
         for(int x = x0; x <= x1; x++ )

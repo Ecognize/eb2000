@@ -6,12 +6,16 @@
 // области видимости. В случае статических членов — пока программа не завершится.
 
 // mix colors
-Color & Color::operator &(Color &c)
+Color & Color::operator &(const Color &c)
 {
-    if(this == c)       // check for self-assignment
-        return *this;
+    /*if(this == c)       // check for self-assignment
+        return *this;*/
+    r() = (r() + c.r()) / 2;
+    g() = (g() + c.g()) / 2;
+    b() = (b() + c.b()) / 2;
+    a() = (a() + c.a()) / 2;
 
-    return Color((this->r() + c.r()) / 2, (this->g() + c.g()) / 2, (this->b() + c.b()) / 2, (this->a() + c.a()) / 2 );
+    return (*this);
 }
 
 const Color& Color::White  = Color(255, 255, 255);
