@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "SDL.h"
+#include "SDL/SDL_opengl.h"
 #include "Color.hpp"
 
 
@@ -62,10 +63,12 @@ class Screen
 
     private:
         std::vector <Color> buffer;         // virtual [emulated 320x2xx] screen
+        std::vector <Color>::iterator it;   // and it's iterator
         static const int  virtualb;         // 320 px
         unsigned int      virtualw;         // it's width
         unsigned int      virtualh;         // and height
         unsigned int      virtuals;         // it's pixel size
+        unsigned int         shift;         // if virtual screen does not match real ideally
         SDL_Surface      * context;         // SDL surface
 
         int                 sfmode;         // 0 - drawing to buffer, 1 - drawing to real screen with 1px pixel size

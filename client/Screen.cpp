@@ -2,6 +2,7 @@
 #define _EB2K_SCREEN_CPP
 
 #include "Screen.hpp"
+#include <cstdlib>
 
 // emulate 320x2xx screen
 const int Screen::virtualb = 320;
@@ -44,30 +45,52 @@ void Screen::setVideoMode(const VideoMode& mode)
     if(mode.fullscreen())
         flags |= SDL_FULLSCREEN;
 
-    int bpp = SDL_VideoModeOK(mode.w(), mode.h(), mode.bpp(), flags);  // Определяем оптимальную глубину цвета
 
-    if (bpp == 0)   // Режим не доступен
+    if (SDL_VideoModeOK(mode.w(), mode.h(), mode.bpp(), flags) == 0)   // Режим не доступен
     {
-        throw "Mode is not available.";
-        //exit(-1);
+        // throw "Mode is not available.";
+        std::cout << "mode is not available" << std::endl;
+        exit(-1);
     }
 
     // TODO: make normal debug messages
-    std::cout << "Mode verified: " << mode.w() << "x" << mode.h() << "x" << bpp << std::endl;
+    std::cout << "Mode verified: " << mode.w() << "x" << mode.h() << "x" << mode.bpp() << std::endl;
     context = SDL_SetVideoMode(mode.w(), mode.h(), mode.bpp(), flags);    // Установим режим
     
     if(context == NULL)
-        throw "Can not set videomode.";
+    {
+        //throw "Can not set videomode.";
+        std::cout << "can not set videomode" << std::endl;
+        exit(-1);
+    }
+
+    // set window caption
+    SDL_WM_SetCaption( "eb2k", NULL );
+
+    // set few OpenGL flags
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);   // use double buffering
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+    glOrtho (0, mode.w(), mode.h(), 0, 0, 1);      // for pixel-precise
+    glMatrixMode (GL_MODELVIEW);
+
+    glDisable(GL_DITHER) ;
+    glDisable(GL_DEPTH_TEST);                      // disable depth buffer
+    glDisable(GL_TEXTURE_2D);
+    glClear(GL_COLOR_BUFFER_BIT);                  // clear screen
 
     // Заполним инфо о режиме
     currentMode.w() = mode.w();
     currentMode.h() = mode.h();
-    currentMode.bpp() = bpp;
+    currentMode.bpp() = mode.bpp();
 
     // fill up virtual screen data
     virtualw = virtualb;
     virtuals = currentMode.w() / virtualb;
     virtualh = currentMode.h() / virtuals;
+
+    // calculate shift
+    shift = (currentMode.w() - (virtualw * virtuals)) / 2;
 
     // make vector
     for (int i = 0; i < virtualh * virtualw; i++)
@@ -112,6 +135,26 @@ void Screen::flipEntireScreen()
 
     //currentMode.w(), currentMode.h());
     //SDL_BlitSurface(buffer, 0, _sdlsurface, 0);
+
+
+    //for(it = buffer.begin(); it != buffer.end(); it++)
+    Color point;
+
+    for(int y = 0; y < virtualh; y ++)
+        for(int x = 0; x < virtualw; x ++)
+        {
+            point = buffer[x + virtualw * y];
+
+            glColor4ub(point.r(), point.g(), point.b(), point.a());
+
+            glBegin(GL_QUADS);
+                glVertex2i(shift + x * virtuals, y * virtuals);
+                glVertex2i(shift + x * virtuals + virtuals, y * virtuals);
+                glVertex2i(shift + x * virtuals + virtuals, y * virtuals + virtuals);
+                glVertex2i(shift + x * virtuals, y * virtuals + virtuals);
+            glEnd();
+        }
+    SDL_GL_SwapBuffers();
     SDL_UpdateRect(context, 0, 0, 0, 0);
 }
 
