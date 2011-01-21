@@ -2,6 +2,12 @@
 
 // main TODO: rewrite exceptions to use our ones
 
+// empty constructor
+Settings::Settings()
+{
+    sz = 0;
+}
+
 // constructor: open file
 Settings::Settings(std::string file)
 {
@@ -50,7 +56,7 @@ unsigned int Settings::getCount()
 }
 
 // get copy of data
-const std::map <std::string, std::string> Settings::getData()
+const setType Settings::getData()
 {
     return data;
 }
@@ -94,7 +100,7 @@ void Settings::read()
             } // else unrecognized string; TODO: error ?
         }
     }
-    catch (std::fstream::failure e) { std::cout << "smth happened during parsing" << endl; }
+    catch (std::fstream::failure e) { std::cout << "smth happened during parsing" << std::endl; }
 }
 
 // write file

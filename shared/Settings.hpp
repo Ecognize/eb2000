@@ -7,10 +7,13 @@
 #include <string>
 #include <map>
 
+typedef std::map <std::string, std::string> setType;
+
 class Settings
 {
     public:
         /* construct & destruct */
+        Settings();
         Settings(std::string file);
         ~Settings();
 
@@ -25,11 +28,11 @@ class Settings
         void save();                                  // flush data to file
         void read();                                  // parse file
         unsigned int getCount();                      // get data count
-        const std::map <std::string, std::string> getData();
+        const setType getData();
 
     private:
-        std::map <std::string, std::string> data;           // data container
-        std::map <std::string, std::string>::iterator it;   // its iterator
+        setType data;           // data container
+        setType::iterator it;   // its iterator
         std::string filename;                               // filename storage
         std::fstream fs;                                    // stream descriptor
         unsigned int sz;                                    // number of settings

@@ -135,7 +135,7 @@ void Screen::flipEntireScreen()
 
     // update screen anyway
     SDL_GL_SwapBuffers();
-    SDL_UpdateRect(context, 0, 0, 0, 0);
+    //SDL_UpdateRect(context, 0, 0, 0, 0);
 }
 
 // очистка экрана

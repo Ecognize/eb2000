@@ -1,0 +1,13 @@
+# Settings' test file
+
+# this will be removed
+set2 = something   
+setting = empty # and this too
+
+age = 22	# will be replaced
+
+something = value
+moved              =    one
+          moved    =      two
+               moved  =  three    # and comment here
+
