@@ -27,8 +27,7 @@ class Screen
         void  setVideoMode(const VideoMode& mode);
         //const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
 
-        const VideoMode& getCurrentMode() const { return currentMode; }                  // get current videomode
-        const VideoMode& getVirtualMode() const { return virtualMode; }
+        const VideoMode& getCurrentMode() const; // get current screen dimensions depending on mode
         
         void  flipEntireScreen();           // entire buffer to real screen
         void  flipScreen();
@@ -51,9 +50,9 @@ class Screen
     private:
         //typedef std::pair <Point, Color> TPoint;
         //typedef std::set  <TPoint> BType;
+        void makeQuad(const Point &, const Color &);
         
         static const int  virtualb;         // 320 px
-        unsigned int         shift;         // if virtual screen does not match real ideally
         SDL_Surface      * context;         // SDL surface
 
         int                 sfmode;         // 0 - drawing to buffer, 1 - drawing to real screen with 1px pixel size
@@ -61,10 +60,8 @@ class Screen
         //BType buffer;       // all
         //BType matrix;       // new frame
 
-        void makeQuad(const Point &, const Color &); 
-        
-        VideoMode currentMode;              // Информация о видеорежиме, используемом в данный момент
-        VideoMode virtualMode;
+        VideoMode currentMode;              // current hardware mode
+        VideoMode virtualMode;              // current virtual screen mode
         
         bool hmax;                          // Используется ли max available videomode
         unsigned short fps;                 // Понты колотить :)

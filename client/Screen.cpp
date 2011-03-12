@@ -83,9 +83,6 @@ void Screen::setVideoMode(const VideoMode& mode)
     virtualMode.h() = currentMode.h() / virtualMode.bpp();    // for full using of screen
     virtualMode.fullscreen() = currentMode.fullscreen();
 
-    // calculate shift
-    shift = (currentMode.w() - (virtualMode.w() * virtualMode.bpp())) / 4;
-
     // make vector
     //for(unsigned int y = 0; y < virtualh; y++)
     //    for(unsigned int x = 0; x < virtualw; x++)
@@ -109,15 +106,17 @@ void Screen::makeQuad(const Point & point, const Color & color)
 }
 
 // get screen flipping mode
-int Screen::getMode()
-{
-    return sfmode;
-}
+int Screen::getMode() { return sfmode; }
 
 // set screen flipping mode
-void Screen::setMode(int m)
+void Screen::setMode(int m) { sfmode = m; }
+
+// get current screen dimensions depending on mode
+const VideoMode& Screen::getCurrentMode() const
 {
-    sfmode = m;
+    if(sfmode == FLIP_VIRTUAL)
+         return virtualMode;
+    else return currentMode;
 }
 
 void Screen::flipEntireScreen()
