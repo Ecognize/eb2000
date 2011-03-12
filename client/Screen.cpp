@@ -30,12 +30,6 @@ const VideoMode Screen::getMaxVideoMode() const
     return VideoMode(s->current_w, s->current_h, s->vfmt.bitsPerPixel);
 }*/
 
-// Узнать текущий используемый режим
-const VideoMode& Screen::getVideoMode() const
-{
-    return currentMode;
-}
-
 // Установить видеорежим
 void Screen::setVideoMode(const VideoMode& mode)
 {
@@ -76,7 +70,6 @@ void Screen::setVideoMode(const VideoMode& mode)
 
     glDisable(GL_DITHER) ;
     glDisable(GL_DEPTH_TEST);                      // disable depth buffer
-    glDisable(GL_TEXTURE_2D);
     glClear(GL_COLOR_BUFFER_BIT);                  // clear screen
 
     // Заполним инфо о режиме
@@ -85,18 +78,34 @@ void Screen::setVideoMode(const VideoMode& mode)
     currentMode.bpp() = mode.bpp();
 
     // fill up virtual screen data
-    virtualw = virtualb;
-    virtuals = currentMode.w() / virtualb;
-    virtualh = currentMode.h() / virtuals;
+    virtualMode.bpp() = currentMode.w() / virtualb;           // declare the 320x2xx
+    virtualMode.w() = currentMode.w() / virtualMode.bpp();    // but make actual wider
+    virtualMode.h() = currentMode.h() / virtualMode.bpp();    // for full using of screen
+    virtualMode.fullscreen() = currentMode.fullscreen();
 
     // calculate shift
-    shift = (currentMode.w() - (virtualw * virtuals)) / 2;
+    shift = (currentMode.w() - (virtualMode.w() * virtualMode.bpp())) / 4;
 
     // make vector
-    for (int i = 0; i < virtualh * virtualw; i++)
-        buffer.push_back(Color::Black);
+    //for(unsigned int y = 0; y < virtualh; y++)
+    //    for(unsigned int x = 0; x < virtualw; x++)
+    //        buffer.insert(std::make_pair(Point(x,y), Color::Black));
 
-    std::cout << "Virtual screen initialized: " << virtualw << "x" << virtualh << ", pixel size is " << virtuals << std::endl;
+    std::cout << "Virtual screen initialized: " <<
+        virtualMode.w() << "x" << virtualMode.h() <<
+        ", pixel size is " << virtualMode.bpp() << std::endl;
+}
+
+void Screen::makeQuad(const Point & point, const Color & color)
+{
+    glColor4ub(color.r(), color.g(), color.b(), color.a());
+    
+    glBegin(GL_QUADS);
+        glVertex2i(point.x() * virtualMode.bpp(), point.y() * virtualMode.bpp());
+        glVertex2i(point.x() * virtualMode.bpp() + virtualMode.bpp(), point.y() * virtualMode.bpp());
+        glVertex2i(point.x() * virtualMode.bpp() + virtualMode.bpp(), point.y() * virtualMode.bpp() + virtualMode.bpp());
+        glVertex2i(point.x() * virtualMode.bpp(), point.y() * virtualMode.bpp() + virtualMode.bpp());
+    glEnd();
 }
 
 // get screen flipping mode
@@ -113,7 +122,7 @@ void Screen::setMode(int m)
 
 void Screen::flipEntireScreen()
 {
-    if(sfmode == FLIP_VIRTUAL)   // flip virtual screen
+   /* if(sfmode == FLIP_VIRTUAL)   // flip virtual screen
     {
         Color point;
 
@@ -122,17 +131,10 @@ void Screen::flipEntireScreen()
             {
                 point = buffer[x + virtualw * y];
 
-                glColor4ub(point.r(), point.g(), point.b(), point.a());
-
-                glBegin(GL_QUADS);
-                    glVertex2i(shift + x * virtuals, y * virtuals);
-                    glVertex2i(shift + x * virtuals + virtuals, y * virtuals);
-                    glVertex2i(shift + x * virtuals + virtuals, y * virtuals + virtuals);
-                    glVertex2i(shift + x * virtuals, y * virtuals + virtuals);
-                glEnd();
+               // makeQuad(x, y, point);
             }
     }
-
+  */
     // update screen anyway
     SDL_GL_SwapBuffers();
     //SDL_UpdateRect(context, 0, 0, 0, 0);
@@ -144,27 +146,34 @@ void Screen::clearScreen()
     /*for(int y = 0; y < vh; y++)
        for(int x = 0; x < vw; x++)
            _surface[x + vw * y] = Color::Black;*/
+        glClear(GL_COLOR_BUFFER_BIT);
     
 }
 
+
 // Поставить точку
-void Screen::putPixel(unsigned int x, unsigned int y, const Color &color)
+void Screen::putPixel(const Point & point, const Color &color)
 {
     if(sfmode == FLIP_VIRTUAL)
-        buffer[x + virtualw * y] = color;
+        makeQuad(point, color);
     else    // just put physical point
     {
         glColor4ub(color.r(), color.g(), color.b(), color.a());
         glBegin(GL_POINTS);
-            glVertex2i(x, y);
+            glVertex2i(point.x(), point.y());
         glEnd();
     }
+}
+
+void Screen::putPixel(unsigned int x, unsigned int y, const Color &color)
+{
+    putPixel(Point(x, y), color);
 }
 
 // Узнать цвет точки
 Color Screen::getPixel(unsigned int x, unsigned int y)
 {
-    return buffer.at(x + virtualw * y);
+    return Color::Black;//buffer.at(x + virtualw * y);
 }
 
 /* Графические примитивы */
