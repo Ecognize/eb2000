@@ -4,11 +4,12 @@
 #include "Screen.hpp"
 #include <cstdlib>
 
-// emulate 320x2xx screen
-const int Screen::virtualb = 320;
+// emulate 312x192 screen
+const unsigned int Screen::vx = 312;
+const unsigned int Screen::vy = 192;
 
 /* Конструктор и деструктор */
-Screen::Screen() : currentMode(800,600,16,false)
+Screen::Screen() : currentMode(800, 600, 16, false)
 {
     sfmode = FLIP_VIRTUAL;    // drawing to virtual
 }
@@ -78,30 +79,23 @@ void Screen::setVideoMode(const VideoMode& mode)
     currentMode.bpp() = mode.bpp();
 
     // fill up virtual screen data
-    virtualMode.bpp() = currentMode.w() / virtualb;           // declare the 320x2xx
-    virtualMode.w() = currentMode.w() / virtualMode.bpp();    // but make actual wider
-    virtualMode.h() = currentMode.h() / virtualMode.bpp();    // for full using of screen
-    virtualMode.fullscreen() = currentMode.fullscreen();
+    ps = currentMode.w() / vx;      // determine point size for 312x192
 
-    // make vector
-    //for(unsigned int y = 0; y < virtualh; y++)
-    //    for(unsigned int x = 0; x < virtualw; x++)
-    //        buffer.insert(std::make_pair(Point(x,y), Color::Black));
+    xshift = (currentMode.w() - (vx * ps)) / 2;
+    yshift = (currentMode.h() - (vy * ps)) / 2;
 
-    std::cout << "Virtual screen initialized: " <<
-        virtualMode.w() << "x" << virtualMode.h() <<
-        ", pixel size is " << virtualMode.bpp() << std::endl;
+    std::cout << "point size is " << ps << ", shift is " << xshift << "x" << yshift << std::endl;
 }
 
-void Screen::makeQuad(const Point & point, const Color & color)
+void Screen::makeQuad(unsigned int x, unsigned int y, const Color & color)
 {
     glColor4ub(color.r(), color.g(), color.b(), color.a());
     
     glBegin(GL_QUADS);
-        glVertex2i(point.x() * virtualMode.bpp(), point.y() * virtualMode.bpp());
-        glVertex2i(point.x() * virtualMode.bpp() + virtualMode.bpp(), point.y() * virtualMode.bpp());
-        glVertex2i(point.x() * virtualMode.bpp() + virtualMode.bpp(), point.y() * virtualMode.bpp() + virtualMode.bpp());
-        glVertex2i(point.x() * virtualMode.bpp(), point.y() * virtualMode.bpp() + virtualMode.bpp());
+        glVertex2i(xshift + x * ps,      yshift + y * ps);
+        glVertex2i(xshift + x * ps + ps, yshift + y * ps);
+        glVertex2i(xshift + x * ps + ps, yshift + y * ps + ps);
+        glVertex2i(xshift + x * ps,      yshift + y * ps + ps);
     glEnd();
 }
 
@@ -115,58 +109,34 @@ void Screen::setMode(int m) { sfmode = m; }
 const VideoMode& Screen::getCurrentMode() const
 {
     if(sfmode == FLIP_VIRTUAL)
-         return virtualMode;
+         return VideoMode(vx, vy, ps, currentMode.fullscreen());
     else return currentMode;
 }
 
-void Screen::flipEntireScreen()
+void Screen::flipScreen()
 {
-   /* if(sfmode == FLIP_VIRTUAL)   // flip virtual screen
-    {
-        Color point;
-
-        for(int y = 0; y < virtualh; y ++)
-            for(int x = 0; x < virtualw; x ++)
-            {
-                point = buffer[x + virtualw * y];
-
-               // makeQuad(x, y, point);
-            }
-    }
-  */
-    // update screen anyway
     SDL_GL_SwapBuffers();
-    //SDL_UpdateRect(context, 0, 0, 0, 0);
 }
 
 // очистка экрана
 void Screen::clearScreen()
 {
-    /*for(int y = 0; y < vh; y++)
-       for(int x = 0; x < vw; x++)
-           _surface[x + vw * y] = Color::Black;*/
-        glClear(GL_COLOR_BUFFER_BIT);
-    
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 
 // Поставить точку
-void Screen::putPixel(const Point & point, const Color &color)
+void Screen::putPixel(unsigned int x, unsigned int y, const Color &color)
 {
     if(sfmode == FLIP_VIRTUAL)
-        makeQuad(point, color);
+        makeQuad(x, y, color);
     else    // just put physical point
     {
         glColor4ub(color.r(), color.g(), color.b(), color.a());
         glBegin(GL_POINTS);
-            glVertex2i(point.x(), point.y());
+            glVertex2i(x, y);
         glEnd();
     }
-}
-
-void Screen::putPixel(unsigned int x, unsigned int y, const Color &color)
-{
-    putPixel(Point(x, y), color);
 }
 
 // Узнать цвет точки

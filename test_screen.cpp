@@ -7,8 +7,8 @@ int main()
 {
     Screen screen;
 
-    int sw = 1024;
-    int sh = 768;
+    int sw = 1280;
+    int sh = 1024;
 
     // init SDL
     SDL_Init(SDL_INIT_VIDEO);
@@ -17,7 +17,7 @@ int main()
     screen.setVideoMode(VideoMode(sw,sh,32,true));
 
     // set direct drawing
-    screen.setMode(FLIP_DIRECT); // or try FLIP_VIRTUAL
+    screen.setMode(FLIP_VIRTUAL); // or try FLIP_VIRTUAL
 
     // fetch current screen dims
     VideoMode vmode = screen.getCurrentMode();
@@ -39,7 +39,7 @@ int main()
         screen.line(random() % w, random() % h, random() % w, random() % h, Color::Green);
         screen.line(random() % w, random() % h, random() % w, random() % h, Color::Blue);
         screen.line(random() % w, random() % h, random() % w, random() % h, Color::White);
-        screen.flipEntireScreen();
+        screen.flipScreen();
 
         fps_frames++;
 

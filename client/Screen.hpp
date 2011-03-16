@@ -10,7 +10,6 @@
 
 #include "VideoMode.hpp"
 #include "Color.hpp"
-#include "Point.hpp"
 
 #define  FLIP_DIRECT   1
 #define  FLIP_VIRTUAL  0
@@ -29,39 +28,34 @@ class Screen
 
         const VideoMode& getCurrentMode() const; // get current screen dimensions depending on mode
         
-        void  flipEntireScreen();           // entire buffer to real screen
         void  flipScreen();
         void  clearScreen(); 
         
         int   getMode();
         void  setMode(int);
 
-        // vital
-        void  putPixel (const Point &, const Color &);
         void  putPixel (unsigned int, unsigned int, const Color &);
-        
         Color getPixel (unsigned int x, unsigned int y);
 
-        // r they nec if we r using opengl ?
         void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color);  
         void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color); 
         void bar(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color);
 
     private:
-        //typedef std::pair <Point, Color> TPoint;
-        //typedef std::set  <TPoint> BType;
-        void makeQuad(const Point &, const Color &);
+        void makeQuad(unsigned int, unsigned int, const Color &);
         
-        static const int  virtualb;         // 320 px
+        static const unsigned int  vx;      // 312 px
+        static const unsigned int  vy;      // 192 px
+        unsigned int               ps;      // point size
+
+        unsigned int xshift;
+        unsigned int yshift;
+
         SDL_Surface      * context;         // SDL surface
 
         int                 sfmode;         // 0 - drawing to buffer, 1 - drawing to real screen with 1px pixel size
                                             // ^ game process only ^, ^^ rest of screens, settings etc.
-        //BType buffer;       // all
-        //BType matrix;       // new frame
-
         VideoMode currentMode;              // current hardware mode
-        VideoMode virtualMode;              // current virtual screen mode
         
         bool hmax;                          // Используется ли max available videomode
         unsigned short fps;                 // Понты колотить :)
