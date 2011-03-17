@@ -2,6 +2,7 @@
 #define _EB2K_SPRITE_HPP
 
 #include <iostream>
+#include <SDL.h>
 #include <GL/gl.h>
 
 class Sprite
@@ -30,11 +31,9 @@ class Sprite
         unsigned int _x;        // sprite coords
         unsigned int _y;
 
-        bool loadPNG(const char *);
-
         std::string  _tfile;    // texture file
         GLuint       _tname;    // GL texture name
-        GLubyte    * _tdata;    // pointer to texture data
+        SDL_Surface * _surf;    // pointer to texture data
 };
 
 #endif
