@@ -71,6 +71,10 @@ void Screen::setVideoMode(const VideoMode& mode)
 
     glDisable(GL_DITHER) ;
     glDisable(GL_DEPTH_TEST);                      // disable depth buffer
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_BLEND);
+
     glClear(GL_COLOR_BUFFER_BIT);                  // clear screen
 
     // Заполним инфо о режиме
@@ -79,10 +83,10 @@ void Screen::setVideoMode(const VideoMode& mode)
     currentMode.bpp() = mode.bpp();
 
     // fill up virtual screen data
-    ps = currentMode.w() / vx;      // determine point size for 312x192
+    ps     = mode.w() / vx;      // determine point size for 312x192
 
-    xshift = (currentMode.w() - (vx * ps)) / 2;
-    yshift = (currentMode.h() - (vy * ps)) / 2;
+    xshift = (mode.w() - (vx * ps)) / 2;
+    yshift = (mode.h() - (vy * ps)) / 2;
 
     std::cout << "point size is " << ps << ", shift is " << xshift << "x" << yshift << std::endl;
 }
@@ -92,10 +96,10 @@ void Screen::makeQuad(unsigned int x, unsigned int y, const Color & color)
     glColor4ub(color.r(), color.g(), color.b(), color.a());
     
     glBegin(GL_QUADS);
-        glVertex2i(xshift + x * ps,      yshift + y * ps);
-        glVertex2i(xshift + x * ps + ps, yshift + y * ps);
-        glVertex2i(xshift + x * ps + ps, yshift + y * ps + ps);
-        glVertex2i(xshift + x * ps,      yshift + y * ps + ps);
+        glVertex2i(xshift + x * ps, yshift + y * ps);
+        glVertex2i(xshift + (x + 1) * ps, yshift + y * ps);
+        glVertex2i(xshift + (x + 1) * ps, yshift + (y + 1) * ps);
+        glVertex2i(xshift + x * ps, yshift + (y + 1) * ps);
     glEnd();
 }
 
@@ -108,9 +112,7 @@ void Screen::setMode(int m) { sfmode = m; }
 // get current screen dimensions depending on mode
 const VideoMode& Screen::getCurrentMode() const
 {
-    if(sfmode == FLIP_VIRTUAL)
-         return VideoMode(vx, vy, ps, currentMode.fullscreen());
-    else return currentMode;
+    return currentMode;
 }
 
 void Screen::flipScreen()
@@ -143,6 +145,32 @@ void Screen::putPixel(unsigned int x, unsigned int y, const Color &color)
 Color Screen::getPixel(unsigned int x, unsigned int y)
 {
     return Color::Black;//buffer.at(x + virtualw * y);
+}
+
+void Screen::putSprite(unsigned int x, unsigned int y, const Sprite &sprite)
+{
+    // bind to specific texture
+    glBindTexture(GL_TEXTURE_2D, sprite.name());
+
+    int x0, y0, x1, y1;
+    
+    x0 = xshift + x * ps;
+    y0 = yshift + y * ps;
+    x1 = xshift + (x + sprite.width()) * ps;
+    y1 = yshift + (y + sprite.height()) * ps;
+    
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0);
+        glVertex2i(x0, y0);
+        glTexCoord2i(0, 1);
+        glVertex2i(x0, y1);
+        glTexCoord2i(1, 1);
+        glVertex2i(x1, y1);
+        glTexCoord2i(1, 0);
+        glVertex2i(x1, y0);
+    glEnd();
+
+    std::cout << "Sprite: virtual coords: " << x << ", " << y << " ; real: " << x0 << "," << y0 << " x " << x1 << "," << y1 << std::endl;
 }
 
 /* Графические примитивы */

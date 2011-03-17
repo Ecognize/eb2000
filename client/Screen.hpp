@@ -1,19 +1,17 @@
 #ifndef _EB2K_SCREEN_HPP
 #define _EB2K_SCREEN_HPP
 
-//#include <set>
-//#include <utility>
 #include <iostream>
 
-#include "SDL.h"
-#include "SDL/SDL_opengl.h"
+#include <SDL.h>
+#include <SDL/SDL_opengl.h>
 
 #include "VideoMode.hpp"
+#include "Sprite.hpp"
 #include "Color.hpp"
 
 #define  FLIP_DIRECT   1
 #define  FLIP_VIRTUAL  0
-
 
 // okay, let's left openGL only
 // base screen class
@@ -22,6 +20,9 @@ class Screen
     public:
         Screen();
         ~Screen();
+
+        unsigned int width()  const { return vx; }
+        unsigned int height() const { return vy; }
 
         void  setVideoMode(const VideoMode& mode);
         //const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
@@ -35,7 +36,9 @@ class Screen
         void  setMode(int);
 
         void  putPixel (unsigned int, unsigned int, const Color &);
-        Color getPixel (unsigned int x, unsigned int y);
+        Color getPixel (unsigned int, unsigned int);
+
+        void putSprite (unsigned int, unsigned int, const Sprite &);
 
         void line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color);  
         void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, const Color & color); 

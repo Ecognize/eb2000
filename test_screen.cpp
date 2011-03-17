@@ -7,23 +7,20 @@ int main()
 {
     Screen screen;
 
-    int sw = 1280;
-    int sh = 1024;
+    int sw = 800;
+    int sh = 600;
 
     // init SDL
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Event event;
 
-    screen.setVideoMode(VideoMode(sw,sh,32,true));
+    screen.setVideoMode(VideoMode(sw,sh,32,false));
 
     // set direct drawing
     screen.setMode(FLIP_VIRTUAL); // or try FLIP_VIRTUAL
 
-    // fetch current screen dims
-    VideoMode vmode = screen.getCurrentMode();
-    
-    int w = vmode.w();
-    int h = vmode.h();
+    int w = screen.width();
+    int h = screen.height();
     
     bool done = false;
 
