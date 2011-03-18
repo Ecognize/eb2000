@@ -157,15 +157,18 @@ void Screen::putSprite(unsigned int x, unsigned int y, const Sprite &sprite)
     y0 = yshift + y * ps;
     x1 = xshift + (x + sprite.width()) * ps;
     y1 = yshift + (y + sprite.height()) * ps;
+
+    GLfloat xs = sprite.xshift() / sprite.width();
+    GLfloat ys = sprite.yshift() / sprite.height();
     
     glBegin(GL_QUADS);
-        glTexCoord2f(sprite.xshift(), sprite.yshift());
+        glTexCoord2f(xs, ys);
         glVertex2i(x0, y0);
-        glTexCoord2f(sprite.xshift(), 1.0f - sprite.yshift());
+        glTexCoord2f(xs, 1.0f - ys);
         glVertex2i(x0, y1);
-        glTexCoord2f(1.0f - sprite.xshift(), 1.0f - sprite.yshift());
+        glTexCoord2f(1.0f - xs, 1.0f - ys);
         glVertex2i(x1, y1);
-        glTexCoord2f(1.0f - sprite.xshift(), sprite.yshift());
+        glTexCoord2f(1.0f - xs, ys);
         glVertex2i(x1, y0);
     glEnd();
 

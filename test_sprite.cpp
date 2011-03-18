@@ -27,9 +27,9 @@ int main()
 
     bool done = false;
 
-    Sprite sprite("test2.png");
+    Sprite sprite("test.png");
 
-    screen.putSprite((w + sprite.width()) / 6, (h  + sprite.height()) / 6, sprite);
+    screen.putSprite((w + sprite.width()) / 2, (h  + sprite.height()) / 2, sprite);
 
     screen.flipScreen();
 

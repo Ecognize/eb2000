@@ -2,6 +2,7 @@
 #define _EB2K_SPRITE_CPP
 
 #include <SDL_image.h>
+#include <cmath>
 #include "Sprite.hpp"
 
 Sprite::Sprite(std::string file)
@@ -21,10 +22,10 @@ Sprite::Sprite(std::string file)
     _surf = IMG_Load(file.c_str());
 
     // store image size
-    _spriteWidth = _surf->w;
+    _spriteWidth =  _surf->w;
     _spriteHeight = _surf->h;
 	
-	std::cout << "Sprite dimensions: " << _surf->w << "x" << _surf->h << std::endl;
+	std::cout << "Sprite: texture dimensions are " << _surf->w << "x" << _surf->h << std::endl;
 	
     if(_surf != NULL)
     {
@@ -33,25 +34,44 @@ Sprite::Sprite(std::string file)
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
         // if we not support np2-not-friendly textures
-        if(1/*exts.find("ARB_texture_non_power_of_two") == std::string::npos*/)
+        if(exts.find("ARB_texture_non_power_of_two") == std::string::npos)
         {
-            // calculate canvas
-			
-            _xs = (np2(_surf->w) - _surf->w) / 2;
-            _ys = (np2(_surf->h) - _surf->h) / 2;
-			
-			//_xs = (GLfloat)((_spriteWidth % 2 == 0) ? (_spriteWidth / 2) : _spriteWidth);
-			//_ys = (GLfloat)((_spriteHeight % 2 == 0) ? (_spriteHeight / 2) : _spriteHeight);
+            std::cout << "Sprite: required GL extension was not found" << std::endl;
+            std::cout << "Sprite: texture needs to be enlarged" << std::endl;
 
-            // expand texture
-            /* expand _surf here */
-			std::cout << "enlarged size is " << np2(_surf->w) << ", " << np2(_surf->h) << std::endl;
-            std::cout << "texture shift is " << _xs << ", " << _ys << std::endl;
-        }
+            // calculate canvas shift
+            unsigned int cx = np2(_surf->w);
+            unsigned int cy = np2(_surf->h);
+            
+            _xs = (cx - _surf->w);
+            _ys = (cy - _surf->h);
 
-		
+            std::cout << "Sprite: texture shift is " << _xs << ", " << _ys << std::endl;
+            
+            // define a rect and fill it
+            SDL_Rect ntex;
+            ntex.x = _xs;
+            ntex.y = _ys;
+            ntex.w = _surf->w;
+            ntex.h = _surf->h;
+            
+            // make surface
+            SDL_PixelFormat *pixf = _surf->format;
+            SDL_Surface    *image = SDL_CreateRGBSurface( SDL_HWSURFACE, cx, cy, 32, pixf->Bmask, pixf->Gmask, pixf->Rmask, pixf->Amask );
+            SDL_SetAlpha(image, 0, 255);
+            
+            // blit image data
+            SDL_BlitSurface(_surf, NULL, image, &ntex);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _surf->w, _surf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, _surf->pixels); // assign data
+            // make texture
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->w, image->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels); // assign data
+
+            // free surface
+            SDL_FreeSurface(image);
+            
+            std::cout << "Sprite: new texture size is " << cx << "x" << cy << std::endl;
+            
+        } else glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _surf->w, _surf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, _surf->pixels); // assign data
         
         // disable texture filtering for pixel-precise sprites
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
