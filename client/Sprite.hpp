@@ -16,8 +16,8 @@ class Sprite
         unsigned int zIndex() const { return _zIndex; }
         GLuint   name()       const { return _tname; }
 
-        unsigned int xshift() const { return _xs; }
-        unsigned int yshift() const { return _ys; }
+        GLfloat xshift() const { return _xs; }
+        GLfloat yshift() const { return _ys; }
 
         template <class T> T np2(T);
 
@@ -32,8 +32,8 @@ class Sprite
         unsigned int _spriteWidth;
         unsigned int _spriteHeight;
 
-        unsigned int _xs;
-        unsigned int _ys;
+        GLfloat _xs;
+        GLfloat _ys;
         
         unsigned int _zIndex;   // layer in drawing
         unsigned int _x;        // sprite coords
