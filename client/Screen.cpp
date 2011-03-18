@@ -72,9 +72,6 @@ void Screen::setVideoMode(const VideoMode& mode)
     glDisable(GL_DITHER) ;
     glDisable(GL_DEPTH_TEST);                      // disable depth buffer
 
-    glEnable(GL_TEXTURE_2D);
-    glEnable (GL_BLEND);
-
     glClear(GL_COLOR_BUFFER_BIT);                  // clear screen
 
     // Заполним инфо о режиме
@@ -149,27 +146,31 @@ Color Screen::getPixel(unsigned int x, unsigned int y)
 
 void Screen::putSprite(unsigned int x, unsigned int y, const Sprite &sprite)
 {
+    int x0, y0, x1, y1;
+
+    glEnable(GL_TEXTURE_2D);
+
     // bind to specific texture
     glBindTexture(GL_TEXTURE_2D, sprite.name());
 
-    int x0, y0, x1, y1;
-    
     x0 = xshift + x * ps;
     y0 = yshift + y * ps;
     x1 = xshift + (x + sprite.width()) * ps;
     y1 = yshift + (y + sprite.height()) * ps;
     
     glBegin(GL_QUADS);
-        glTexCoord2i(0, 0);
+        glTexCoord2i(sprite.xshift(), sprite.yshift());
         glVertex2i(x0, y0);
-        glTexCoord2i(0, 1);
+        glTexCoord2i(sprite.xshift(), sprite.yshift() + sprite.height());
         glVertex2i(x0, y1);
-        glTexCoord2i(1, 1);
+        glTexCoord2i(sprite.xshift() + sprite.width(), sprite.yshift() + sprite.height());
         glVertex2i(x1, y1);
-        glTexCoord2i(1, 0);
+        glTexCoord2i(sprite.xshift() + sprite.width(), sprite.yshift());
         glVertex2i(x1, y0);
     glEnd();
 
+    glDisable(GL_TEXTURE_2D);
+    
     std::cout << "Sprite: virtual coords: " << x << ", " << y << " ; real: " << x0 << "," << y0 << " x " << x1 << "," << y1 << std::endl;
 }
 

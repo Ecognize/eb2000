@@ -16,6 +16,11 @@ class Sprite
         unsigned int zIndex() const { return _zIndex; }
         GLuint   name()       const { return _tname; }
 
+        unsigned int xshift() const { return _xs; }
+        unsigned int yshift() const { return _ys; }
+
+        template <class T> T np2(T);
+
         unsigned int width()  const { return _spriteWidth; }
         unsigned int height() const { return _spriteHeight; }
 
@@ -24,9 +29,12 @@ class Sprite
         unsigned int &zIndex() { return _zIndex; }
 
     private:
-        static const unsigned int _spriteWidth;
-        static const unsigned int _spriteHeight;
+        unsigned int _spriteWidth;
+        unsigned int _spriteHeight;
 
+        unsigned int _xs;
+        unsigned int _ys;
+        
         unsigned int _zIndex;   // layer in drawing
         unsigned int _x;        // sprite coords
         unsigned int _y;

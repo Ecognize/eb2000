@@ -41,7 +41,8 @@ int main()
               done = 1;
         }
     }
-    //SDL_Quit();
+
+//SDL_Quit();
     return 0;
 }
 

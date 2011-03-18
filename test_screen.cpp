@@ -7,14 +7,14 @@ int main()
 {
     Screen screen;
 
-    int sw = 800;
-    int sh = 600;
+    int sw = 1024;
+    int sh = 768;
 
     // init SDL
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Event event;
 
-    screen.setVideoMode(VideoMode(sw,sh,32,false));
+    screen.setVideoMode(VideoMode(sw,sh,32,true));
 
     // set direct drawing
     screen.setMode(FLIP_VIRTUAL); // or try FLIP_VIRTUAL
@@ -23,7 +23,6 @@ int main()
     int h = screen.height();
     
     bool done = false;
-
 
     Uint32 fps_lasttime = SDL_GetTicks(); //the last recorded time.
     Uint32 fps_current = 0; //the current FPS.

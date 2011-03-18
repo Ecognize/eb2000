@@ -31,7 +31,7 @@ class Screen
         
         void  flipScreen();
         void  clearScreen(); 
-        
+
         int   getMode();
         void  setMode(int);
 
