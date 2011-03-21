@@ -1,0 +1,25 @@
+find_package(OpenGL)
+if (OPENGL_FOUND)
+    set(libs ${OPENGL_LIBRARIES})
+else (OPENGL_FOUND)
+    message(SEND_ERROR "is this PDP-10 or what ?! OpenGL not found")
+endif(OPENGL_FOUND)
+
+find_package(SDL)
+if (SDL_FOUND)
+    include_directories(${SDL_INCLUDE_DIR})
+    set(libs ${libs} ${SDL_LIBRARY})
+else (SDL_FOUND)
+    message(SEND_ERROR "can't build client targets without SDL")
+endif (SDL_FOUND)
+
+find_package(SDL_image)
+if (NOT SDLIMAGE_FOUND)
+    message(STATUS "can't build sprite test without SDL image")
+endif (NOT SDLIMAGE_FOUND)
+
+add_executable( screen ${CMAKE_SOURCE_DIR}/test_screen.cpp Screen.cpp Color.cpp )
+target_link_libraries(screen ${libs})
+
+add_executable( sprite ${CMAKE_SOURCE_DIR}/test_sprite.cpp Screen.cpp Color.cpp Sprite.cpp )
+target_link_libraries(sprite ${libs} ${SDLIMAGE_LIBRARY})

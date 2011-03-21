@@ -3,8 +3,12 @@
 #include <cstdlib>
 #include <cmath>
 
-int main()
+int main(int argc, char *argv[])
 {
+    bool fullscreen = true;
+    if (argc == 2 && argv[1] == "-f")
+       fullscreen = false;
+
     Screen screen;
 
     int sw = 1024;
@@ -14,7 +18,7 @@ int main()
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Event event;
 
-    screen.setVideoMode(VideoMode(sw,sh,32,true));
+    screen.setVideoMode(VideoMode(sw,sh,32,fullscreen));
 
     // set direct drawing
     screen.setMode(FLIP_VIRTUAL); // or try FLIP_VIRTUAL
