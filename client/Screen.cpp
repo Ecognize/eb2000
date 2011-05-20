@@ -44,7 +44,7 @@ void Screen::setVideoMode(const VideoMode& mode)
     if (SDL_VideoModeOK(mode.w(), mode.h(), mode.bpp(), flags) == 0)   // Режим не доступен
     {
         // throw "Mode is not available.";
-        std::cout << "mode is not available" << std::endl;
+        std::cout << "mode is not available. SDL says:" << SDL_GetError() << std::endl;
         exit(-1);
     }
 
@@ -55,7 +55,7 @@ void Screen::setVideoMode(const VideoMode& mode)
     if(context == NULL)
     {
         //throw "Can not set videomode.";
-        std::cout << "can not set videomode" << std::endl;
+        std::cout << "can not set videomode. SDL says:" << SDL_GetError() << std::endl;
         exit(-1);
     }
 

@@ -21,14 +21,14 @@ Sprite::Sprite(std::string file)
     // read data from png
     _surf = IMG_Load(file.c_str());
 
-    // store image size
-    _spriteWidth =  _surf->w;
-    _spriteHeight = _surf->h;
-	
-	std::cout << "Sprite: texture dimensions are " << _surf->w << "x" << _surf->h << std::endl;
-	
     if(_surf != NULL)
     {
+		// store image size
+		_spriteWidth =  _surf->w;
+		_spriteHeight = _surf->h;
+	
+		std::cout << "Sprite: texture dimensions are " << _surf->w << "x" << _surf->h << std::endl;
+		
         std::string exts = std::string((const char *)glGetString(GL_EXTENSIONS));
         
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

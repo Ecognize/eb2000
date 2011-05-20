@@ -6,7 +6,8 @@
 int main(int argc, char *argv[])
 {
     bool fullscreen = true;
-    if (argc == 2 && argv[1] == "-f")
+	
+    if (argc == 2 && strcmp(argv[1],"-f"))
        fullscreen = false;
 
     Screen screen;
