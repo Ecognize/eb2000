@@ -3,6 +3,7 @@
 
 #include "Screen.hpp"
 #include <cstdlib>
+#include <cmath>
 
 // emulate 312x192 screen
 const unsigned int Screen::vx = 312;
@@ -80,7 +81,15 @@ void Screen::setVideoMode(const VideoMode& mode)
     currentMode.bpp() = mode.bpp();
 
     // fill up virtual screen data
-    ps     = mode.w() / vx;      // determine point size for 312x192
+    ps = floor(mode.w() / vx);      // determine point size for 312x192
+
+    /* ///
+        check for 16:10 displays with resolution like 1920x1080:
+        in this case we have to compare vy with calculated value
+    */ ///
+
+    if((mode.h() / ps) < vy)         // 1920x1080: ps == 6, vy == 180; we need 192
+        ps = floor(mode.h() / vy);   // ps == 5; floor is nec coz in fact result ~ 5.6
 
     xshift = (mode.w() - (vx * ps)) / 2;
     yshift = (mode.h() - (vy * ps)) / 2;
