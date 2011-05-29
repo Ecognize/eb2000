@@ -10,19 +10,12 @@ int main(int argc, char *argv[])
     if (argc == 2 && strcmp(argv[1],"-f"))
        fullscreen = false;
 
-    Screen screen;
-
-    int sw = 1024;
-    int sh = 768;
-
     // init SDL
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Event event;
 
-    screen.setVideoMode(VideoMode(sw,sh,32,fullscreen));
-
-    // set direct drawing
-    screen.setMode(FLIP_VIRTUAL); // or try FLIP_VIRTUAL
+    Screen screen;
+    screen.setVideoMode(screen.getMaxVideoMode());
 
     int w = screen.width();
     int h = screen.height();

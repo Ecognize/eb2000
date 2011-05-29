@@ -25,7 +25,7 @@ class Screen
         unsigned int height() const { return vy; }
 
         void  setVideoMode(const VideoMode& mode);
-        //const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
+        const VideoMode getMaxVideoMode() const;     		  // получить максимально возможный видеорежим
 
         const VideoMode& getCurrentMode() const; // get current screen dimensions depending on mode
         

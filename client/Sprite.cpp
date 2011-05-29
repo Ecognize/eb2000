@@ -23,11 +23,15 @@ Sprite::Sprite(std::string file)
 
     if(_surf != NULL)
     {
-		// store image size
-		_spriteWidth =  _surf->w;
-		_spriteHeight = _surf->h;
+        // mark this sprite as valid
+        _valid = true;
+
+
+        // store image size
+        _spriteWidth =  _surf->w;
+        _spriteHeight = _surf->h;
 	
-		std::cout << "Sprite: texture dimensions are " << _surf->w << "x" << _surf->h << std::endl;
+        std::cout << "Sprite: texture dimensions are " << _surf->w << "x" << _surf->h << std::endl;
 		
         std::string exts = std::string((const char *)glGetString(GL_EXTENSIONS));
         
@@ -39,10 +43,11 @@ Sprite::Sprite(std::string file)
             std::cout << "Sprite: required GL extension was not found" << std::endl;
             std::cout << "Sprite: texture needs to be enlarged" << std::endl;
 
-            // calculate canvas shift
+            // determine new canvas size
             unsigned int cx = np2(_surf->w);
             unsigned int cy = np2(_surf->h);
             
+            // calculate canvas shift
             _xs = (cx - _surf->w);
             _ys = (cy - _surf->h);
 
@@ -80,7 +85,11 @@ Sprite::Sprite(std::string file)
         // disable texture effects
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     }
-    else std::cout << "can't read texture file" << std::endl;
+    else
+    {
+        std::cout << "can't read texture file" << std::endl;
+        _valid = false;
+    }
 }
 
 Sprite::~Sprite()

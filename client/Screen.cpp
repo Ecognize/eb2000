@@ -23,13 +23,13 @@ Screen::~Screen()
 
 
 /* Работа с видеорежимами */
-/*
+
 // Узнать (максимальный) используемый режим
 const VideoMode Screen::getMaxVideoMode() const
 {
     const SDL_VideoInfo* s = SDL_GetVideoInfo();
-    return VideoMode(s->current_w, s->current_h, s->vfmt.bitsPerPixel);
-}*/
+    return VideoMode(s->current_w, s->current_h, 32, true); // bpp will be overrided if needed
+}
 
 // Установить видеорежим
 void Screen::setVideoMode(const VideoMode& mode)
@@ -146,35 +146,39 @@ Color Screen::getPixel(unsigned int x, unsigned int y)
 
 void Screen::putSprite(unsigned int x, unsigned int y, const Sprite &sprite)
 {
-    int x0, y0, x1, y1;
+    if(sprite.valid())
+    {
+        int x0, y0, x1, y1;
 
-    glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
 
-    // bind to specific texture
-    glBindTexture(GL_TEXTURE_2D, sprite.name());
+        // bind to specific texture
+        glBindTexture(GL_TEXTURE_2D, sprite.name());
 
-    x0 = xshift + x * ps;
-    y0 = yshift + y * ps;
-    x1 = xshift + (x + sprite.width()) * ps;
-    y1 = yshift + (y + sprite.height()) * ps;
+        x0 = xshift + x * ps;
+        y0 = yshift + y * ps;
+        x1 = xshift + (x + sprite.width()) * ps;
+        y1 = yshift + (y + sprite.height()) * ps;
 
-    GLfloat xs = sprite.xshift() / sprite.width();
-    GLfloat ys = sprite.yshift() / sprite.height();
+        GLfloat xs = sprite.xshift() / sprite.width();
+        GLfloat ys = sprite.yshift() / sprite.height();
     
-    glBegin(GL_QUADS);
-        glTexCoord2f(xs, ys);
-        glVertex2i(x0, y0);
-        glTexCoord2f(xs, 1.0f - ys);
-        glVertex2i(x0, y1);
-        glTexCoord2f(1.0f - xs, 1.0f - ys);
-        glVertex2i(x1, y1);
-        glTexCoord2f(1.0f - xs, ys);
-        glVertex2i(x1, y0);
-    glEnd();
+        glBegin(GL_QUADS);
+            glTexCoord2f(xs, ys);
+            glVertex2i(x0, y0);
+            glTexCoord2f(xs, 1.0f - ys);
+            glVertex2i(x0, y1);
+            glTexCoord2f(1.0f - xs, 1.0f - ys);
+            glVertex2i(x1, y1);
+            glTexCoord2f(1.0f - xs, ys);
+            glVertex2i(x1, y0);
+        glEnd();
 
-    glDisable(GL_TEXTURE_2D);
+        glDisable(GL_TEXTURE_2D);
     
-    std::cout << "Sprite: virtual coords: " << x << ", " << y << " ; real: " << x0 << "," << y0 << " x " << x1 << "," << y1 << std::endl;
+        std::cout << "Sprite: virtual coords: " << x << ", " << y << " ; real: " << x0 << "," << y0 << " x " << x1 << "," << y1 << std::endl;
+    }
+    else std::cout << "Sprite: this sprite is not valid and cannot be used here :(" << std::endl;
 }
 
 /* Графические примитивы */

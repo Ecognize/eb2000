@@ -23,6 +23,7 @@ class Sprite
 
         unsigned int width()  const { return _spriteWidth; }
         unsigned int height() const { return _spriteHeight; }
+        bool         valid()  const { return _valid; }
 
         unsigned int &x()      { return _x; }
         unsigned int &y()      { return _y; }
@@ -39,6 +40,7 @@ class Sprite
         unsigned int _x;        // sprite coords
         unsigned int _y;
 
+        bool         _valid;    // shit happens
         std::string  _tfile;    // texture file
         GLuint       _tname;    // GL texture name
         SDL_Surface * _surf;    // pointer to texture data
